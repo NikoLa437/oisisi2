@@ -1,3 +1,6 @@
+
+import glob
+
 class TrieNode():
     def __init__(self, char):
         self.char = char  # karakter u cvoru
@@ -33,3 +36,4 @@ class Trie():
             curr_node = curr_node.children[char]
 
         return curr_node.endOfWord, curr_node.counter
+
