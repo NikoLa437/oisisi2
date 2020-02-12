@@ -24,8 +24,7 @@ class Parser(HTMLParser):
 
         Argumenti:
         - `tag`: naziv taga
-        - `attrs`: lista atributa
-        """
+         """
         if tag == 'a':
             # typecast da izbegnem looping
             attrs = dict(attrs)
