@@ -15,7 +15,7 @@ MAPA_TRIE = {}
 RESULT_SET = Skup()
 RESULT_SKUP = []
 
-def ucitajPodatkes(putanja):
+def ucitajPodatke(putanja):
     start=time.time()
     parser= Parser()
     for root, dirs, files in os.walk("python-2.7.7-docs-html"):
@@ -44,12 +44,12 @@ if __name__ == '__main__':
     putanja = input("Unesi putanju: ")
     ucitajPodatkes(putanja)
     kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
+    kriterijumArray = re.split(' ', kriterijum)
 
     while (True):
         if kriterijum == "X":
             break
         else:
-            kriterijumArray = re.split(' ', kriterijum)
             if "OR" not in kriterijumArray and "AND" not in kriterijumArray and "NOT" not in kriterijumArray:
                 obicnaPretraga(kriterijumArray)
                 RESULT_SET=Skup()
