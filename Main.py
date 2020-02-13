@@ -17,14 +17,14 @@ RESULT_SKUP = []
 def ucitajPodatkes(putanja):
     start=time.time()
     parser= Parser()
-    for root, dirs, files in os.walk("python-2.7.7-docs-html/howto"):
+    for root, dirs, files in os.walk("python-2.7.7-docs-html"):
         for file in files:
             if file.endswith('.html'):
                 links, words = parser.parse(os.path.join(root, file))
                 t = Trie()
                 GRAPH.add_from_html(file, links)
                 for word in words:
-                    t.add_word(word)
+                    t.add_word(word.lower())
                     MAPA_TRIE[file] = t
     end = time.time()
     print(end-start)
@@ -32,10 +32,10 @@ def ucitajPodatkes(putanja):
 def obicnaPretraga(kriterijum):
     for uslov in kriterijum:
         skup = Skup()
-        for trie in MAPA_TRIE.values():
-            bool, ponavaljanja = trie.search(uslov)
+        for key in MAPA_TRIE:
+            bool, ponavaljanja = MAPA_TRIE[key].search(uslov)
             if bool=="True":
-                skup.add(trie.root)
+                skup.add(key)
         RESULT_SKUP.append(skup)
 
 if __name__ == '__main__':
