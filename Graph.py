@@ -1,8 +1,3 @@
-import glob
-
-from parrser import Parser
-
-
 class Graph:
     def __init__(self):
         self._outgoing = {}
@@ -28,7 +23,7 @@ class Graph:
         for link in links:
             self.add_edge(vertex, link)
 
-    def get_ingoing(self, vertex):
+    def get_incoming(self, vertex):
         return list(self._incoming[vertex])
 
     def get_outgoing(self, vertex):
@@ -36,28 +31,3 @@ class Graph:
 
     def vertices(self):
         return list(self._outgoing.keys())
-
-
-parserr = Parser()
-putanja = input("Unesite putanju:\n")
-graph = Graph()
-
-files = glob.glob(putanja + '/**/*.html', recursive=True)
-
-i = 0
-for file in files:
-    links, words = parserr.parse(file)
-    graph.add_from_html(file, links)
-
-"""
-for file in os.listdir(putanja):
-    if file.endswith(".html"):
-        links, words = parserr.parse(putanja)
-        graph.add_from_html(file, links)
-"""
-print("*\n*\n*\n*\n")
-for v in graph.vertices():
-    print(v)
-    i += 1
-
-print(i)
