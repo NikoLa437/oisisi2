@@ -3,6 +3,7 @@ import time
 from parrser import *
 from trie import *
 import glob
+import os
 from Skup import *
 from Graph import Graph
 import re
@@ -25,7 +26,7 @@ def ucitajPodatkes(putanja):
                 GRAPH.add_from_html(file, links)
                 for word in words:
                     t.add_word(word.lower())
-                    MAPA_TRIE[file] = t
+                    MAPA_TRIE[os.path.join(root, file)] = t
     end = time.time()
     print(end-start)
 
