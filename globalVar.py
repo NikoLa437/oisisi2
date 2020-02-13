@@ -10,6 +10,7 @@ import os
 from Skup import *
 from Graph import Graph
 import re
+import sys
 
 global GRAPH
 GRAPH = Graph()
