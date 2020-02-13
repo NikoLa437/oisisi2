@@ -15,10 +15,11 @@ class Prikaz:
 
 def prvo_rangiranje(stranica, trie, niz_reci):
     rang = 0
+
     for rec in niz_reci:
         rang += trie.search(rec)[1]
 
-    rang = rang * 0.5  # rangiramo za svako pojavljivanje reci - svako pojvaljivanje += 0.5
+    rang = float(rang) * 0.5  # rangiramo za svako pojavljivanje reci - svako pojvaljivanje += 0.5
 
     return Prikaz(stranica, rang)
 
