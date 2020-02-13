@@ -5,7 +5,15 @@ from mergeSort import mergeSort
 def ucitajPodatke(putanja):
     start = time.time()
     parser = Parser()
-    for root, dirs, files in os.walk(putanja):
+    files = glob.glob(putanja + '/**/*.html', recursive=True)
+    for file in files:
+        links, words = parser.parse(file)
+        t = Trie()
+        GRAPH.add_from_html(file, links)
+        for word in words:
+            t.add_word(word.lower())
+            MAPA_TRIE[file] = t
+    """for root, dirs, files in os.walk(putanja):
         for file in files:
             if file.endswith('.html'):
                 links, words = parser.parse(os.path.join(root, file))
@@ -13,7 +21,7 @@ def ucitajPodatke(putanja):
                 GRAPH.add_from_html(os.path.join(root, file), links)
                 for word in words:
                     t.add_word(word.lower())
-                    MAPA_TRIE[os.path.join(root, file)] = t
+                    MAPA_TRIE[os.path.join(root, file)] = t"""
     end = time.time()
     print(end - start)
 
@@ -101,7 +109,10 @@ def paginacijaRezultata(lista_prikaz):
         if izbor == "3":
             n = input("Unesite trazeni broj:")
             N = int(n)
-            kraj = pocetak + N
+            if pocetak + N > len(lista_prikaz):
+                kraj = len(lista_prikaz)
+            else:
+                kraj = pocetak + N
 
 def ispisiRezultate(lista_prikaz, pocetak, kraj):
     print("%5s" % "", "%8s" % "Rang", "\tPutanja HTML stranice")
