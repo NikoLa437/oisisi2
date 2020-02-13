@@ -1,51 +1,76 @@
 import time
-import rangiranje
+#import rangiranje
 from parrser import *
 from trie import *
 import glob
+from Skup import *
 from Graph import Graph
+import re
 
 global graph
-graph = Graph()
+GRAPH = Graph()
 global MAPA_TRIE
 MAPA_TRIE = {}
+RESULT_SET = Skup()
+RESULT_SKUP = []
 
-"""
-def ucitajTries(putanja):
-    parser = Parser()
-    files = glob.glob(putanja + '/**/*.html', recursive=True)
-    for file in files:
-        links, words = parser.parse(file)
-        t = Trie()
-        for word in words:
-            t.add_word(word)
-        globalVars.MAPA_TRIE[file] = t.root
-"""
+def ucitajPodatkes(putanja):
+    start=time.time()
+    parser= Parser()
+    for root, dirs, files in os.walk("python-2.7.7-docs-html/howto"):
+        for file in files:
+            if file.endswith('.html'):
+                links, words = parser.parse(os.path.join(root, file))
+                t = Trie()
+                GRAPH.add_from_html(file, links)
+                for word in words:
+                    t.add_word(word)
+                    MAPA_TRIE[file] = t
+    end = time.time()
+    print(end-start)
 
-
-def ucitajTries(words):
-    t = Trie()
-    for word in words:
-        t.add_word(word)
-    MAPA_TRIE[file] = t.root
-
+def obicnaPretraga(kriterijum):
+    for uslov in kriterijum:
+        skup = Skup()
+        for trie in MAPA_TRIE.values():
+            bool, ponavaljanja = trie.search(uslov)
+            if bool=="True":
+                skup.add(trie.root)
+        RESULT_SKUP.append(skup)
 
 if __name__ == '__main__':
 
-
     putanja = input("Unesi putanju: ")
-    # ucitajTries(putanja)
-    parserr = Parser()
-    files = glob.glob(putanja + '/**/*.html', recursive=True)
+    ucitajPodatkes(putanja)
+    kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
 
-    start = time.time()
-    for file in files:
-        links, words = parserr.parse(file)
-        graph.add_from_html(file, links)
-        ucitajTries(words)
+    while (True):
+        if kriterijum == "X":
+            break
+        else:
+            kriterijumArray = re.split(' ', kriterijum)
+            if "OR" not in kriterijumArray and "AND" not in kriterijumArray and "NOT" not in kriterijumArray:
+                obicnaPretraga(kriterijumArray)
+                RESULT_SET=Skup()
+                for file in RESULT_SKUP:
+                    RESULT_SET = RESULT_SET | file
+                for file in RESULT_SET:
+                    print(file)
 
-    end = time.time()
-    print(end - start)
+            break
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     """mapa_prikaza = {}
 

@@ -26,14 +26,14 @@ class Trie():
 
     def search(self, word):
         if word == "":
-            return True
+            return "True",0
 
         curr_node = self.root
 
         for char in word:
             if char not in curr_node.children:
-                return False
+                return "False",0
             curr_node = curr_node.children[char]
 
-        return curr_node.endOfWord, curr_node.counter
+        return str(curr_node.endOfWord), curr_node.counter
 

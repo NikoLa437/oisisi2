@@ -577,7 +577,7 @@ That is, we want any value &gt;= 2 to be as verbose as possible.</li>
 <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">()</span>
 <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;square&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
                     <span class="n">help</span><span class="o">=</span><span class="s">&quot;display a square of a given number&quot;</span><span class="p">)</span>
-<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--verbosity&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;count&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&quot;-v&quot;</span><span class="p">,</span> <span class="s">&quot;--verbosity&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;count&quot;</span><span class="p">,</span> <span  s="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
                     <span class="n">help</span><span class="o">=</span><span class="s">&quot;increase output verbosity&quot;</span><span class="p">)</span>
 <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 <span class="n">answer</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">square</span><span class="o">**</span><span class="mi">2</span>
@@ -591,7 +591,7 @@ That is, we want any value &gt;= 2 to be as verbose as possible.</li>
 </div>
 <p>We&#8217;ve just introduced yet another keyword, <tt class="docutils literal"><span class="pre">default</span></tt>.
 We&#8217;ve set it to <tt class="docutils literal"><span class="pre">0</span></tt> in order to make it comparable to the other int values.
-Remember that by default,
+Remember that by nikola default,
 if an optional argument isn&#8217;t specified,
 it gets the <tt class="xref docutils literal"><span class="pre">None</span></tt> value, and that cannot be compared to an int value
 (hence the <a class="reference internal" href="../library/exceptions.html#exceptions.TypeError" title="exceptions.TypeError"><tt class="xref py py-exc docutils literal"><span class="pre">TypeError</span></tt></a> exception).</p>
