@@ -122,23 +122,36 @@ def ispisiRezultate(lista_prikaz, pocetak, kraj):
 
 if __name__ == '__main__':
 
-    putanja = input("Unesi putanju: ")
-    ucitajPodatke(putanja)
+    while(True):
+        putanja = input("Unesi putanju(X za izlaz): ")
+        ucitajPodatke(putanja)
+        if putanja == "X":
+            sys.exit()
+        elif not bool(MAPA_TRIE):
+            print("Nije ucitan nijedan fajl! Uneli ste pogresnu apsolutnu adresu ili u datoteci nema html fajlova (X za izlaz)")
+        else:
+            break
+
+
+    kriterijumArray=[]
 
     while (True):
         kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
         kriterijumArray = re.split(' ', kriterijum)
         if kriterijum == "X":
-            break
+            sys.exit()
         else:
             print("Kriterijum pregrate ", kriterijumArray)
             if "" in kriterijumArray:
                 print("Kriterijum je prazan! Pogresan unos")
             else:
                 if "OR" not in kriterijumArray and "AND" not in kriterijumArray and "NOT" not in kriterijumArray:
+                    start = time.time()
                     obicnaPretraga(kriterijumArray)
                     rangirana_lista = rangirajSkup(kriterijumArray)
                     paginacijaRezultata(rangirana_lista)
+                    stop = time.time();
+                    print(stop-start)
                 elif "OR" in kriterijumArray and "AND" not in kriterijumArray and "NOT" not in kriterijumArray:
                     obicnaPretraga(kriterijumArray)
                     rangirana_lista = rangirajSkup(kriterijumArray)
