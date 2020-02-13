@@ -2,9 +2,9 @@ class Skup:
     def __init__(self):
         self._stranice = {}
 
-    def add(self, stranica):
+    def add(self, stranica,broj):
         if not self.__contains__(stranica):
-            self._stranice[stranica] = stranica
+            self._stranice[stranica] = broj
 
     def remove(self, stranica):
         if self.__contains__(stranica):

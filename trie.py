@@ -1,5 +1,6 @@
 
 import glob
+from Skup import *
 
 class TrieNode():
     def __init__(self, char):
@@ -7,13 +8,13 @@ class TrieNode():
         self.children = {}  # pokazivac na decu u cvoru
         self.endOfWord = False  # oznaka kraja reci
         self.counter = 0  # brojac pojavljivanja reci
-
+        self.stranice = Skup()
 
 class Trie():
     def __init__(self):
         self.root = TrieNode("*")  # inicijalizacija head-a
 
-    def add_word(self, word):
+    def add_word(self, word,file):
         curr_node = self.root
 
         for char in word:
@@ -23,17 +24,18 @@ class Trie():
 
         curr_node.endOfWord = True
         curr_node.counter += 1
+        curr_node.stranice.add(file, curr_node.counter)
 
     def search(self, word):
         if word == "":
-            return "True",0
+            return "False",0, None
 
         curr_node = self.root
 
         for char in word:
             if char not in curr_node.children:
-                return "False",0
+                return "False",0,None
             curr_node = curr_node.children[char]
 
-        return str(curr_node.endOfWord), curr_node.counter
+        return str(curr_node.endOfWord), curr_node.counter, curr_node.stranice
 

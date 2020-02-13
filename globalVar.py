@@ -16,5 +16,7 @@ global GRAPH
 GRAPH = Graph()
 global MAPA_TRIE
 MAPA_TRIE = {}
+global GLOBAL_TRIE
+GLOBAL_TRIE= Trie()
 RESULT_SET = Skup()
 RESULT_SKUP = []
