@@ -1,6 +1,6 @@
-from globalVar import *
+#from globalVar import *
 from mergeSort import mergeSort
-
+from pretrage import *
 
 def ucitajPodatke(putanja):
     start = time.time()
@@ -11,6 +11,7 @@ def ucitajPodatke(putanja):
         #GRAPH.add_from_html(file, links) ===========================================================za duleta
         for word in words:
             GLOBAL_TRIE.add_word(word.lower(),file)
+            NADSKUP.add(file,0)
     end = time.time()
     print(end - start)
 
@@ -26,24 +27,6 @@ for root, dirs, files in os.walk(putanja):
                     t.add_word(word.lower())
                     MAPA_TRIE[os.path.join(root, file)] = t
 """
-
-
-def obicnaPretraga(kriterijum):
-    global RESULT_SET
-    RESULT_SET = Skup()
-    RESULT_SKUP= []
-    for uslov in kriterijum:
-            bool, ponavaljanja,skup = GLOBAL_TRIE.search(uslov.lower())
-            if bool=="True":
-                RESULT_SKUP.append(skup) # niz skupova koji sadrze html dokumente koji ispunjavaju uslov
-    for file in RESULT_SKUP:  # prolazimo kroz skup skupova html dokumenata koji ispunjavaju uslov i radimo logicko | za obicnu pretragu
-        RESULT_SET = RESULT_SET | file
-    for f in RESULT_SET:
-        print(f)
-
-def slozenijaPretraga(kriterijum, operacija):
-    print("Test: ", operacija)
-
 
 def rangirajSkup(niz_reci):
     mapa_prikaza = {}
@@ -123,24 +106,21 @@ def ispisiRezultate(lista_prikaz, pocetak, kraj):
 
 if __name__ == '__main__':
 
-    putanja = input("Unesi putanju(X za izlaz): ")
-    ucitajPodatke(putanja)
-    """while(True):
+    while(True):
         putanja = input("Unesi putanju(X za izlaz): ")
         ucitajPodatke(putanja)
         if putanja == "X":
             sys.exit()
-        elif not bool(MAPA_TRIE):
+        elif not bool(GLOBAL_TRIE):
             print("Nije ucitan nijedan fajl! Uneli ste pogresnu apsolutnu adresu ili u datoteci nema html fajlova (X za izlaz)")
         else:
-            break"""
-
+            break
 
     kriterijumArray=[]
 
     while (True):
         kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
-        kriterijumArray = re.split(' ', kriterijum)
+        kriterijumArray = re.split(' ', kriterijum.lower())
         if kriterijum == "X":
             sys.exit()
         else:
@@ -148,22 +128,28 @@ if __name__ == '__main__':
             if "" in kriterijumArray:
                 print("Kriterijum je prazan! Pogresan unos")
             else:
-                if "OR" not in kriterijumArray and "AND" not in kriterijumArray and "NOT" not in kriterijumArray:
+                if "or" not in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
                     start = time.time()
                     obicnaPretraga(kriterijumArray)
                     """rangirana_lista = rangirajSkup(kriterijumArray)
                     paginacijaRezultata(rangirana_lista)
                     stop = time.time();
                     print(stop-start)"""
-                elif "OR" in kriterijumArray and "AND" not in kriterijumArray and "NOT" not in kriterijumArray:
+                elif "or" in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
+                    kriterijumArray.remove("or")
                     obicnaPretraga(kriterijumArray)
-                    rangirana_lista = rangirajSkup(kriterijumArray)
-                    paginacijaRezultata(rangirana_lista)
-                elif "OR" not in kriterijumArray and "AND" in kriterijumArray and "NOT" not in kriterijumArray:
+                    #rangirana_lista = rangirajSkup(kriterijumArray)
+                    #paginacijaRezultata(rangirana_lista)
+                elif "or" not in kriterijumArray and "and" in kriterijumArray and "not" not in kriterijumArray:
+                    kriterijumArray.remove("and")
                     slozenijaPretraga(kriterijumArray, "AND")
-                    rangirana_lista = rangirajSkup(kriterijumArray)
-                    paginacijaRezultata(rangirana_lista)
-                elif "OR" not in kriterijumArray and "AND" not in kriterijumArray and "NOT" in kriterijumArray:
+                    #rangirana_lista = rangirajSkup(kriterijumArray)
+                    #paginacijaRezultata(rangirana_lista)
+                elif "or" not in kriterijumArray and "and" not in kriterijumArray and kriterijumArray[0] == "not":
+                    kriterijumArray.remove("not")
+                    slozenijaPretraga(kriterijumArray, "KOMPLEMENT")
+                elif "or" not in kriterijumArray and "and" not in kriterijumArray and "not" in kriterijumArray:
+                    kriterijumArray.remove("not")
                     slozenijaPretraga(kriterijumArray, "NOT")
-                    rangirana_lista = rangirajSkup(kriterijumArray)
-                    paginacijaRezultata(rangirana_lista)
+                    #rangirana_lista = rangirajSkup(kriterijumArray)
+                    #paginacijaRezultata(rangirana_lista)
