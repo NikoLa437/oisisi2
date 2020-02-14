@@ -21,10 +21,9 @@ class Trie():
             if char not in curr_node.children:
                 curr_node.children[char] = TrieNode(char)
             curr_node = curr_node.children[char]
-
+        curr_node.counter+=1
         curr_node.endOfWord = True
-        curr_node.counter += 1
-        curr_node.stranice.add(file, curr_node.counter)
+        curr_node.stranice.add(file, 1)
 
     def search(self, word):
         if word == "":
@@ -37,5 +36,5 @@ class Trie():
                 return "False",0,None
             curr_node = curr_node.children[char]
 
-        return str(curr_node.endOfWord), curr_node.counter, curr_node.stranice
+        return str(curr_node.endOfWord),0, curr_node.stranice
 

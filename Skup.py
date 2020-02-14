@@ -4,7 +4,12 @@ class Skup:
 
     def add(self, stranica,broj):
         if not self.__contains__(stranica):
-            self._stranice[stranica] = broj
+            self._stranice[stranica] = broj  # inicijalizuje ukoliko nema stranice na broj pojavljivanja date reci
+        else:
+            self._stranice[stranica] +=1 # ukoliko vec postoji u datom html fajlu data rec samo povecava njen broj
+
+    def getStr(self):
+        return self._stranice # vraca stranice,koristimo da bi mogli da dobijemo vrednost recnika u uniji,preseku,komplementu
 
     def remove(self, stranica):
         if self.__contains__(stranica):
@@ -19,20 +24,22 @@ class Skup:
     def __or__(self, other):
 
         retVal = Skup()
-        for e in other:
-            retVal.add(e)
+        for s in other:
+            o=other.getStr()
+            retVal.add(s,o[s])
         for s in self:
-            retVal.add(s)
-
+            retVal.add(s,self._stranice[s])
         return retVal
+
 
     def __and__(self, other):
 
         retVal = Skup()
 
         for e in other:
+            o = other.getStr()
             if self.__contains__(e):
-                retVal.add(e)
+                retVal.add(e,o[e])
         return retVal
 
     def __sub__(self, other):
@@ -40,8 +47,9 @@ class Skup:
         retVal = Skup()
 
         for e in self:
+            o = other.getStr()
             if not other.__contains__(e):
-                retVal.add(e)
+                retVal.add(e,o[e])
         return retVal
 
     def komplement(self, nadskup):
@@ -49,7 +57,8 @@ class Skup:
         retVal = Skup()
 
         for e in nadskup:
+            o = nadskup.getStr()
             if not self.__contains__(e):
-                retVal.add(e)
+                retVal.add(e,o[e])
 
         return retVal
