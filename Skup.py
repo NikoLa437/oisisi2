@@ -37,9 +37,9 @@ class Skup:
         retVal = Skup()
 
         for e in other:
-            o = other.getStr()
             if self.__contains__(e):
-                retVal.add(e,o[e])
+                retVal.add(e,self._stranice[e])
+
         return retVal
 
     def __sub__(self, other):
@@ -47,9 +47,8 @@ class Skup:
         retVal = Skup()
 
         for e in self:
-            o = other.getStr()
             if not other.__contains__(e):
-                retVal.add(e,o[e])
+                retVal.add(e,self._stranice[e])
         return retVal
 
     def komplement(self, nadskup):
