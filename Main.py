@@ -11,7 +11,7 @@ from mergeSort import mergeSort
 from parrser import Parser
 from pretrage import *
 
-#broj_podredjenih = 0.05
+broj_podredjenih = 0.05
 
 def ucitajPodatke(putanja):
     start = time.time()
@@ -56,7 +56,7 @@ def rangirajSkup(niz_reci):
         mapa_prikaza[el] += rangiranje.drugo_rangiranje(nova_mapa, GRAPH.get_incoming(el), 0.3, GRAPH)
         mapa_prikaza[el] += globalVar.zbir_rangiranje
         globalVar.zbir_rangiranje = 0
-        globalVar.n = 0.05
+        globalVar.n = broj_podredjenih
 
     del nova_mapa #vise nam nije potrebna
     # rangiranje na osnovu broja linkova
@@ -129,9 +129,6 @@ if __name__ == '__main__':
     while (True):
         putanja = input("Unesi putanju(X za izlaz): ")
         ucitajPodatke(putanja)
-        """br_pod = input("Unesite broj podredjenih cvorova koji zelite da utice na rangiranje: ")
-        broj_podredjenih = 0.300001 / float(br_pod)
-        globalVar.n = broj_podredjenih"""
         if putanja == "X":
             sys.exit()
         elif not bool(GLOBAL_TRIE):
@@ -147,6 +144,10 @@ if __name__ == '__main__':
         if kriterijum == "X":
             sys.exit()
         else:
+            br_pod = input("Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                           "ce rangiranje biti sporije): ")
+            broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
+            globalVar.n = broj_podredjenih
             print("Kriterijum pregrate ", kriterijumArray)
             if "" in kriterijumArray or len(kriterijumArray) > 3 or (
                     len(kriterijumArray) == 2 and kriterijumArray[0] != "not" and (
