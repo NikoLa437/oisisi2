@@ -1,3 +1,7 @@
+import globalVar
+from Skup import Skup
+
+
 class Prikaz:
     def __init__(self, stranica, rang):
         self._stranica = stranica
@@ -13,31 +17,50 @@ class Prikaz:
         self._rang = rang
 
 
-def prvo_rangiranje(stranica, trie, niz_reci):
-    rang = 0
+def prvo_rangiranje(niz_reci):
+    mapa_prikaza = {}
+    for stranica in globalVar.RESULT_SET:
+        mapa_prikaza[stranica] = 0  # inicijalno stavljamo da je rang 0
 
     for rec in niz_reci:
-        rang += trie.search(rec)[1]
+        bool, skup = globalVar.GLOBAL_TRIE.search(rec.lower())
+        if bool == "True":
+            o = skup.getStr()
+            for stranica in o:
+                if stranica in mapa_prikaza.keys():
+                    mapa_prikaza[stranica] += o[stranica]
 
-    rang = float(rang) * 0.5  # rangiramo za svako pojavljivanje reci - svako pojvaljivanje += 0.5
+    for stranica in globalVar.RESULT_SET:
+        mapa_prikaza[stranica] = mapa_prikaza[stranica] * 0.5
 
-    return Prikaz(stranica, rang)
+    return mapa_prikaza
 
 
-def drugo_rangiranje(pocetni_rang, mapa_prikaza, lista_ulaznih_cvorova, mnozilac, graph):
+def drugo_rangiranje(mapa_prikaza, lista_ulaznih_cvorova, mnozilac, graph):
     zbir = 0
+    i = 0
     for cvor in lista_ulaznih_cvorova:
+        i += 1
         if mapa_prikaza.keys().__contains__(cvor):
-            if mnozilac < 0.01:
+            if mnozilac < globalVar.n:
                 zbir += mapa_prikaza[cvor]
             else:
-                return pocetni_rang + drugo_rangiranje(mapa_prikaza[cvor], mapa_prikaza, graph.get_incoming(cvor),
-                                                           mnozilac / 3, graph)
+                zbir += drugo_rangiranje(mapa_prikaza, graph.get_incoming(cvor),
+                                         mnozilac / 3, graph)
+                globalVar.zbir_rangiranje = globalVar.zbir_rangiranje + mapa_prikaza[cvor] * mnozilac
+                if i == len(lista_ulaznih_cvorova):
+                    globalVar.zbir_rangiranje += zbir
+                    zbir = 0
+                    globalVar.n *= 3
         else:
-            if mnozilac < 0.01:
+            if mnozilac < globalVar.n:
                 pass
             else:
-                return pocetni_rang + drugo_rangiranje(0, mapa_prikaza, graph.get_incoming(cvor),
-                                                           mnozilac / 3, graph)
+                zbir += drugo_rangiranje(mapa_prikaza, graph.get_incoming(cvor),
+                                         mnozilac / 3, graph)
+                if i == len(lista_ulaznih_cvorova):
+                    globalVar.zbir_rangiranje += zbir
+                    zbir = 0
+                    globalVar.n *= 3
 
     return zbir * mnozilac

@@ -1,6 +1,17 @@
-#from globalVar import *
+# from globalVar import *
+import copy
+import glob
+import re
+import sys
+import time
+
+import rangiranje
+from globalVar import GRAPH, GLOBAL_TRIE, NADSKUP
 from mergeSort import mergeSort
+from parrser import Parser
 from pretrage import *
+
+#broj_podredjenih = 0.05
 
 def ucitajPodatke(putanja):
     start = time.time()
@@ -8,14 +19,15 @@ def ucitajPodatke(putanja):
     files = glob.glob(putanja + '/**/*.html', recursive=True)
     for file in files:
         links, words = parser.parse(file)
-        #GRAPH.add_from_html(file, links) ===========================================================za duleta
+        GRAPH.add_from_html(file, links)  # ===========================================================za duleta
         for word in words:
-            GLOBAL_TRIE.add_word(word.lower(),file)
-            NADSKUP.add(file,0)
+            GLOBAL_TRIE.add_word(word.lower(), file)
+            NADSKUP.add(file, 0)
     end = time.time()
     print(end - start)
 
-#cuvam za svaki slucaj sa os.walk
+
+# cuvam za svaki slucaj sa os.walk
 """
 for root, dirs, files in os.walk(putanja):
         for file in files:
@@ -28,24 +40,25 @@ for root, dirs, files in os.walk(putanja):
                     MAPA_TRIE[os.path.join(root, file)] = t
 """
 
+
 def rangirajSkup(niz_reci):
-    mapa_prikaza = {}
-    retVal = []
 
-    # rangiranje na osnovu broja reci u stranicama
-    for stranica in RESULT_SET:
-        prikaz = rangiranje.prvo_rangiranje(stranica, MAPA_TRIE[stranica], niz_reci)
-        mapa_prikaza[prikaz.get_stranica()] = prikaz.get_rang()
+    retVal = [] # lista koja ce kasnije biti ispisana
 
-    nova_mapa = copy.deepcopy(mapa_prikaza)
+    mapa_prikaza = rangiranje.prvo_rangiranje(niz_reci)  # prvo rangiranje - po broju reci u stranicama- svaka rec +=
+                                                         # 0.5 u rangu
+    nova_mapa = copy.deepcopy(mapa_prikaza) # radimo deep copy mape [stanica, rang], da bi na sledece rangiranje
+                                            # uticalo prethodno stanje
+                                            # (onemogucavamo da se dinamicki menja tokom rangiranja)
 
-    """for el in nova_mapa:
-        print(round(nova_mapa[el],2), el)"""
-
-    # rangiranje na osnovu broja reci linkovanim stranicama
+    # rangiranje na osnovu broja reci linkovanim stranicama, na osnovu broja (0.3) odredjujemo "dubinu" rangiranja
     for el in mapa_prikaza:
-        mapa_prikaza[el] = rangiranje.drugo_rangiranje(nova_mapa[el], nova_mapa, GRAPH.get_incoming(el), 0.3, GRAPH)
+        mapa_prikaza[el] += rangiranje.drugo_rangiranje(nova_mapa, GRAPH.get_incoming(el), 0.3, GRAPH)
+        mapa_prikaza[el] += globalVar.zbir_rangiranje
+        globalVar.zbir_rangiranje = 0
+        globalVar.n = 0.05
 
+    del nova_mapa #vise nam nije potrebna
     # rangiranje na osnovu broja linkova
     for el in mapa_prikaza:
         mapa_prikaza[el] = mapa_prikaza[el] + GRAPH.get_incoming(el).__len__()
@@ -53,18 +66,18 @@ def rangirajSkup(niz_reci):
     for el in mapa_prikaza:
         retVal.append(rangiranje.Prikaz(el, mapa_prikaza[el]))
 
-    mergeSort(retVal)
+    mergeSort(retVal) # sortiramo rezultat
     return retVal
+
 
 def paginacijaRezultata(lista_prikaz):
     N = 10
     pocetak = 0
-    kraj = 0
     if N > len(lista_prikaz):
         kraj = len(lista_prikaz)
     else:
         kraj = N
-    while(True):
+    while (True):
         ispisiRezultate(lista_prikaz, pocetak, kraj)
         print("\n")
         print("Izaberite opciju:")
@@ -77,15 +90,22 @@ def paginacijaRezultata(lista_prikaz):
         if izbor == "X" or izbor == "x":
             break
         if izbor == "1":
-            pocetak += N
             if kraj + N > len(lista_prikaz):
+                if pocetak - N < 0:
+                    pocetak = 0
+                else:
+                    pocetak = kraj
                 kraj = len(lista_prikaz)
             else:
                 kraj += N
+                pocetak += N
         if izbor == "2":
             if pocetak - N < 0:
                 pocetak = 0
-                kraj = N
+                if N > len(lista_prikaz):
+                    kraj = len(lista_prikaz)
+                else:
+                    kraj = N
             else:
                 kraj = pocetak
                 pocetak -= N
@@ -98,25 +118,29 @@ def paginacijaRezultata(lista_prikaz):
             else:
                 kraj = pocetak + N
 
+
 def ispisiRezultate(lista_prikaz, pocetak, kraj):
     print("%5s" % "", "%8s" % "Rang", "\tPutanja HTML stranice")
     for i in range(pocetak, kraj, 1):
-        print("%5s" % str(i + 1) + ".","%8.2f" % lista_prikaz[i].get_rang(), lista_prikaz[i].get_stranica())
+        print("%5s" % str(i + 1) + ".", "%8.2f" % lista_prikaz[i].get_rang(), lista_prikaz[i].get_stranica())
 
 
 if __name__ == '__main__':
-
-    while(True):
+    while (True):
         putanja = input("Unesi putanju(X za izlaz): ")
         ucitajPodatke(putanja)
+        """br_pod = input("Unesite broj podredjenih cvorova koji zelite da utice na rangiranje: ")
+        broj_podredjenih = 0.300001 / float(br_pod)
+        globalVar.n = broj_podredjenih"""
         if putanja == "X":
             sys.exit()
         elif not bool(GLOBAL_TRIE):
-            print("Nije ucitan nijedan fajl! Uneli ste pogresnu apsolutnu adresu ili u datoteci nema html fajlova (X za izlaz)")
+            print(
+                "Nije ucitan nijedan fajl! Uneli ste pogresnu apsolutnu adresu ili u datoteci nema html fajlova (X za izlaz)")
         else:
             break
 
-    kriterijumArray=[]
+    kriterijumArray = []
 
     while (True):
         kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
@@ -129,27 +153,27 @@ if __name__ == '__main__':
                 print("Kriterijum je prazan! Pogresan unos")
             else:
                 if "or" not in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
-                    start = time.time()
                     obicnaPretraga(kriterijumArray)
-                    """rangirana_lista = rangirajSkup(kriterijumArray)
-                    paginacijaRezultata(rangirana_lista)
+                    start = time.time()
+                    rangirana_lista = rangirajSkup(kriterijumArray)
                     stop = time.time();
-                    print(stop-start)"""
+                    print(stop - start)
+                    paginacijaRezultata(rangirana_lista)
                 elif "or" in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
                     kriterijumArray.remove("or")
                     obicnaPretraga(kriterijumArray)
-                    #rangirana_lista = rangirajSkup(kriterijumArray)
-                    #paginacijaRezultata(rangirana_lista)
+                    # rangirana_lista = rangirajSkup(kriterijumArray)
+                    # paginacijaRezultata(rangirana_lista)
                 elif "or" not in kriterijumArray and "and" in kriterijumArray and "not" not in kriterijumArray:
                     kriterijumArray.remove("and")
                     slozenijaPretraga(kriterijumArray, "AND")
-                    #rangirana_lista = rangirajSkup(kriterijumArray)
-                    #paginacijaRezultata(rangirana_lista)
+                    # rangirana_lista = rangirajSkup(kriterijumArray)
+                    # paginacijaRezultata(rangirana_lista)
                 elif "or" not in kriterijumArray and "and" not in kriterijumArray and kriterijumArray[0] == "not":
                     kriterijumArray.remove("not")
                     slozenijaPretraga(kriterijumArray, "KOMPLEMENT")
                 elif "or" not in kriterijumArray and "and" not in kriterijumArray and "not" in kriterijumArray:
                     kriterijumArray.remove("not")
                     slozenijaPretraga(kriterijumArray, "NOT")
-                    #rangirana_lista = rangirajSkup(kriterijumArray)
-                    #paginacijaRezultata(rangirana_lista)
+                    # rangirana_lista = rangirajSkup(kriterijumArray)
+                    # paginacijaRezultata(rangirana_lista)
