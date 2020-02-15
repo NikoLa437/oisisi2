@@ -38,12 +38,11 @@ def slozenijaPretraga(kriterijum, operacija):
 
         globalVar.RESULT_SET = globalVar.RESULT_SET - drugi_skup  # odradjuje se or metoda nad skupovima
     elif operacija=="KOMPLEMENT":
-        global NADSKUP
         uslov= kriterijum[0]
         bool,skup = globalVar.GLOBAL_TRIE.search(uslov.lower())
         if bool == "True":
             globalVar.RESULT_SET = skup  # niz skupova koji sadrze html dokumente koji ispunjavaju uslov
-        globalVar.RESULT_SET= globalVar.RESULT_SET.komplement(NADSKUP)
+        globalVar.RESULT_SET= globalVar.RESULT_SET.komplement(globalVar.NADSKUP)
 
 
 

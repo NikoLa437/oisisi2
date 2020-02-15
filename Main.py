@@ -178,6 +178,8 @@ if __name__ == '__main__':
                 elif "or" not in kriterijumArray and "and" not in kriterijumArray and kriterijumArray[0] == "not":
                     kriterijumArray.remove("not")
                     slozenijaPretraga(kriterijumArray, "KOMPLEMENT")
+                    rangirana_lista = rangirajSkup(kriterijumArray)
+                    paginacijaRezultata(rangirana_lista)
                 elif "or" not in kriterijumArray and "and" not in kriterijumArray and "not" in kriterijumArray:
                     kriterijumArray.remove("not")
                     slozenijaPretraga(kriterijumArray, "NOT")
