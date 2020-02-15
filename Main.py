@@ -135,8 +135,7 @@ if __name__ == '__main__':
         if putanja == "X":
             sys.exit()
         elif not bool(GLOBAL_TRIE):
-            print(
-                "Nije ucitan nijedan fajl! Uneli ste pogresnu apsolutnu adresu ili u datoteci nema html fajlova (X za izlaz)")
+            print("Nije ucitan nijedan fajl! Uneli ste pogresnu apsolutnu adresu ili u datoteci nema html fajlova (X za izlaz)")
         else:
             break
 
@@ -149,8 +148,15 @@ if __name__ == '__main__':
             sys.exit()
         else:
             print("Kriterijum pregrate ", kriterijumArray)
-            if "" in kriterijumArray:
-                print("Kriterijum je prazan! Pogresan unos")
+            if "" in kriterijumArray or len(kriterijumArray) > 3 or (
+                    len(kriterijumArray) == 2 and kriterijumArray[0] != "not" and (
+                    kriterijumArray[0] == "or" or kriterijumArray[0] == "and" or kriterijumArray[1] == "not" or
+                    kriterijumArray[1] == "and" or kriterijumArray[1] == "or")) or (len(kriterijumArray) == 3 and (
+                    kriterijumArray[1] != "not" and kriterijumArray[1] != "and" and kriterijumArray[1] != "or")):
+                print("\nPogresan unos! Moguci razlozi:")
+                print(
+                    "-Kriterijum je prazan ili ima prazan string u sebi.\n-Kriterijum ima vise od 2 kriterijuma pretrage u osnovnoj pretragi")
+                print("FORMAT: [KRITERIJUM] ili [ KRITERIJUM1 [OR " " AND NOT] KRITERIJUM2 ] ili [ NOT KRITERIJUM1 ]\n")
             else:
                 if "or" not in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
                     obicnaPretraga(kriterijumArray)
@@ -162,18 +168,18 @@ if __name__ == '__main__':
                 elif "or" in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
                     kriterijumArray.remove("or")
                     obicnaPretraga(kriterijumArray)
-                    # rangirana_lista = rangirajSkup(kriterijumArray)
-                    # paginacijaRezultata(rangirana_lista)
+                    rangirana_lista = rangirajSkup(kriterijumArray)
+                    paginacijaRezultata(rangirana_lista)
                 elif "or" not in kriterijumArray and "and" in kriterijumArray and "not" not in kriterijumArray:
                     kriterijumArray.remove("and")
                     slozenijaPretraga(kriterijumArray, "AND")
-                    # rangirana_lista = rangirajSkup(kriterijumArray)
-                    # paginacijaRezultata(rangirana_lista)
+                    rangirana_lista = rangirajSkup(kriterijumArray)
+                    paginacijaRezultata(rangirana_lista)
                 elif "or" not in kriterijumArray and "and" not in kriterijumArray and kriterijumArray[0] == "not":
                     kriterijumArray.remove("not")
                     slozenijaPretraga(kriterijumArray, "KOMPLEMENT")
                 elif "or" not in kriterijumArray and "and" not in kriterijumArray and "not" in kriterijumArray:
                     kriterijumArray.remove("not")
                     slozenijaPretraga(kriterijumArray, "NOT")
-                    # rangirana_lista = rangirajSkup(kriterijumArray)
-                    # paginacijaRezultata(rangirana_lista)
+                    rangirana_lista = rangirajSkup(kriterijumArray)
+                    paginacijaRezultata(rangirana_lista)
