@@ -218,6 +218,11 @@ if __name__ == '__main__':
         elif nacin_pretrage == "2":
             while (True):
                 kriterijum = input("Unesite kriterijum napredne pretrage ili X za izlazak: ")
+                br_pod = input(
+                    "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                    "ce rangiranje biti sporije): ")
+                broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
+                globalVar.n = broj_podredjenih
                 if kriterijum != "X":
                     kriterijumArray = re.split(' ', kriterijum.lower())
                     postfix = infixToPostfixGenerator(kriterijum)
