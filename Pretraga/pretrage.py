@@ -1,9 +1,10 @@
 import globalVar
-from Skup import Skup
+from StrukturePodataka.Skup import Skup
 
 def slozenijaPretraga(kriterijum, operacija):
     globalVar.RESULT_SET = Skup()
     smestena_prva = False
+    drugi_skup = Skup()
     if operacija =="OR":
         for uslov in kriterijum:
             bool, skup = globalVar.GLOBAL_TRIE.search(uslov.lower())  # dobijamo skup pretrage

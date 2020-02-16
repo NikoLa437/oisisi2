@@ -1,6 +1,4 @@
-
-import glob
-from Skup import *
+from StrukturePodataka.Skup import *
 
 class TrieNode():
     def __init__(self, char):

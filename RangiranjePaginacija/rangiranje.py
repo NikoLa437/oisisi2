@@ -1,4 +1,7 @@
 import globalVar
+import copy
+
+from mergeSort import mergeSort
 
 
 class Prikaz:
@@ -65,3 +68,39 @@ def drugo_rangiranje(mapa_prikaza, lista_ulaznih_cvorova, mnozilac, graph):
                     globalVar.n *= 3
 
     return zbir * mnozilac
+
+def rangirajSkup(niz_reci):
+
+    retVal = [] # lista koja ce kasnije biti ispisana
+
+    mapa_prikaza = prvo_rangiranje(niz_reci)  # prvo rangiranje - po broju reci u stranicama- svaka rec +=
+                                                         # 0.5 u rangu
+    nova_mapa = copy.deepcopy(mapa_prikaza) # radimo deep copy mape [stanica, rang], da bi na sledece rangiranje
+                                            # uticalo prethodno stanje
+                                            # (onemogucavamo da se dinamicki menja tokom rangiranja)
+
+    # rangiranje na osnovu broja reci linkovanim stranicama, na osnovu broja (0.3) odredjujemo "dubinu" rangiranja
+    for el in mapa_prikaza:
+        mapa_prikaza[el] += drugo_rangiranje(nova_mapa, globalVar.GRAPH.get_incoming(el), 0.3, globalVar.GRAPH)
+        mapa_prikaza[el] += globalVar.zbir_rangiranje
+        globalVar.zbir_rangiranje = 0
+        globalVar.n = globalVar.broj_podredjenih
+
+    del nova_mapa #vise nam nije potrebna
+    # rangiranje na osnovu broja linkova
+    """for el in mapa_prikaza:
+        mapa_prikaza[el] = mapa_prikaza[el] + GRAPH.get_incoming(el).__len__()"""
+    for el in mapa_prikaza:
+        for ulazna in globalVar.GRAPH.get_incoming(el):
+            if globalVar.RESULT_SET.__contains__(ulazna):
+                mapa_prikaza[el] += 1 # svaki link koji sadrzi trazenu rec rang += 1 ili
+                                      # koji ne sadrzi (u slucaju sa NOT)
+            else:
+                mapa_prikaza[el] += 0.5 # svaki link koji ne sadrzi trazenu rec rang += 0.5
+                                        # ili je sadrzi (u slucaju sa NOT)
+
+    for el in mapa_prikaza:
+        retVal.append(Prikaz(el, mapa_prikaza[el]))
+
+    mergeSort(retVal) # sortiramo rezultat
+    return retVal

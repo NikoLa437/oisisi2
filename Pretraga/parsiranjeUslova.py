@@ -1,6 +1,6 @@
 import globalVar
-from Skup import Skup
-from stack import *
+from StrukturePodataka.Skup import Skup
+from StrukturePodataka.stack import *
 
 class TreeNode: # cvor stabla koje cemo kreirati
     def __init__(self, value):

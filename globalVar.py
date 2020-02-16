@@ -1,8 +1,8 @@
 # globalne varijable i importi
 
-from Graph import Graph
-from trie import *
-from Skup import *
+from StrukturePodataka.Graph import Graph
+from StrukturePodataka.trie import *
+from StrukturePodataka.Skup import *
 
 global GRAPH
 GRAPH = Graph()
@@ -14,5 +14,6 @@ RESULT_SET = Skup() # skup koji sadrzi html stranice koje ispunjavaju odredjeni 
 NADSKUP = Skup() # cuva skup svih stranica u fajlu (moze se koristiti za komplement)
 global n
 n = 0.05
+broj_podredjenih = 0.05
 global zbir_rangiranje
 zbir_rangiranje = 0
