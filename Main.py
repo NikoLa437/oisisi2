@@ -9,6 +9,7 @@ import rangiranje
 from globalVar import GRAPH, GLOBAL_TRIE, NADSKUP
 from mergeSort import mergeSort
 from parrser import Parser
+from parsiranjeUslova import infixToPostfixGenerator, kreirajStablo, evaluacijaStabla
 from pretrage import *
 
 broj_podredjenih = 0.05
@@ -65,9 +66,11 @@ def rangirajSkup(niz_reci):
     for el in mapa_prikaza:
         for ulazna in GRAPH.get_incoming(el):
             if globalVar.RESULT_SET.__contains__(ulazna):
-                mapa_prikaza[el] += 1 # svaki link koji sadrzi trazenu rec rang += 1
+                mapa_prikaza[el] += 1 # svaki link koji sadrzi trazenu rec rang += 1 ili
+                                      # koji ne sadrzi (u slucaju sa NOT)
             else:
                 mapa_prikaza[el] += 0.5 # svaki link koji ne sadrzi trazenu rec rang += 0.5
+                                        # ili je sadrzi (u slucaju sa NOT)
 
     for el in mapa_prikaza:
         retVal.append(rangiranje.Prikaz(el, mapa_prikaza[el]))
@@ -79,50 +82,53 @@ def rangirajSkup(niz_reci):
 def paginacijaRezultata(lista_prikaz):
     N = 10
     pocetak = 0
-    if N > len(lista_prikaz):
-        kraj = len(lista_prikaz)
-    else:
-        kraj = N
-    while (True):
-        ispisiRezultate(lista_prikaz, pocetak, kraj)
-        print("\n")
-        print("Izaberite opciju:")
-        print("1 - Za prikaz sledecih " + str(N) + " stranica")
-        print("2 - Za prikaz prethodnih " + str(N) + " stranica")
-        print("3 - Za promenu broja prikazanih stranica")
-        print("X - Za izlazak iz pretrage")
-        izbor = input("Unesite opciju")
+    if lista_prikaz.__len__() != 0:
+        if N > len(lista_prikaz):
+            kraj = len(lista_prikaz)
+        else:
+            kraj = N
+        while (True):
+            ispisiRezultate(lista_prikaz, pocetak, kraj)
+            print("\n")
+            print("Izaberite opciju:")
+            print("1 - Za prikaz sledecih " + str(N) + " stranica")
+            print("2 - Za prikaz prethodnih " + str(N) + " stranica")
+            print("3 - Za promenu broja prikazanih stranica")
+            print("X - Za izlazak iz pretrage")
+            izbor = input("Unesite opciju: ")
 
-        if izbor == "X" or izbor == "x":
-            break
-        if izbor == "1":
-            if kraj + N > len(lista_prikaz):
-                if pocetak - N < 0:
-                    pocetak = 0
-                else:
-                    pocetak = kraj
-                kraj = len(lista_prikaz)
-            else:
-                kraj += N
-                pocetak += N
-        if izbor == "2":
-            if pocetak - N < 0:
-                pocetak = 0
-                if N > len(lista_prikaz):
+            if izbor == "X" or izbor == "x":
+                break
+            if izbor == "1":
+                if kraj + N > len(lista_prikaz):
+                    if pocetak - N < 0:
+                        pocetak = 0
+                    else:
+                        pocetak = kraj
                     kraj = len(lista_prikaz)
                 else:
-                    kraj = N
-            else:
-                kraj = pocetak
-                pocetak -= N
+                    kraj += N
+                    pocetak += N
+            if izbor == "2":
+                if pocetak - N < 0:
+                    pocetak = 0
+                    if N > len(lista_prikaz):
+                        kraj = len(lista_prikaz)
+                    else:
+                        kraj = N
+                else:
+                    kraj = pocetak
+                    pocetak -= N
 
-        if izbor == "3":
-            n = input("Unesite trazeni broj:")
-            N = int(n)
-            if pocetak + N > len(lista_prikaz):
-                kraj = len(lista_prikaz)
-            else:
-                kraj = pocetak + N
+            if izbor == "3":
+                n = input("Unesite trazeni broj: ")
+                N = int(n)
+                if pocetak + N > len(lista_prikaz):
+                    kraj = len(lista_prikaz)
+                else:
+                    kraj = pocetak + N
+    else:
+        print("Ne postoje HTML stranice koje zadovoljavaju zadati kriterijum!")
 
 
 def ispisiRezultate(lista_prikaz, pocetak, kraj):
@@ -155,50 +161,81 @@ if __name__ == '__main__':
     kriterijumArray = []
 
     while (True):
-        kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
-        kriterijumArray = re.split(' ', kriterijum.lower())
-        if kriterijum == "X":
+        print("Odaberite vrstu pretrage:")
+        print("1 - Obicna pretraga")
+        print("2 - Napredna pretraga")
+        print("X - Izlaz iz programa")
+        nacin_pretrage = input("Unos: ")
+        if nacin_pretrage == "1":
+            while(True):
+                kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
+                kriterijumArray = re.split(' ', kriterijum.lower())
+                if kriterijum == "X":
+                    break
+                else:
+                    br_pod = input("Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                                   "ce rangiranje biti sporije): ")
+                    broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
+                    globalVar.n = broj_podredjenih
+                    print("Kriterijum pregrate ", kriterijumArray)
+                    if "" in kriterijumArray or len(kriterijumArray) > 3 or (
+                            len(kriterijumArray) == 2 and kriterijumArray[0] != "not" and (
+                            kriterijumArray[0] == "or" or kriterijumArray[0] == "and" or kriterijumArray[1] == "not" or
+                            kriterijumArray[1] == "and" or kriterijumArray[1] == "or")) or (len(kriterijumArray) == 3 and (
+                            kriterijumArray[1] != "not" and kriterijumArray[1] != "and" and kriterijumArray[1] != "or")):
+                        print("\nPogresan unos! Moguci razlozi:")
+                        print(
+                            "-Kriterijum je prazan ili ima prazan string u sebi.\n-Kriterijum ima vise od 2 kriterijuma pretrage u osnovnoj pretragi")
+                        print("FORMAT: [KRITERIJUM] ili [ KRITERIJUM1 [OR " " AND NOT] KRITERIJUM2 ] ili [ NOT KRITERIJUM1 ]\n")
+                    else:
+                        if "or" not in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
+                            obicnaPretraga(kriterijumArray)
+                            start = time.time()
+                            rangirana_lista = rangirajSkup(kriterijumArray)
+                            stop = time.time();
+                            print(stop - start)
+                            paginacijaRezultata(rangirana_lista)
+                        elif "or" in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
+                            kriterijumArray.remove("or")
+                            obicnaPretraga(kriterijumArray)
+                            rangirana_lista = rangirajSkup(kriterijumArray)
+                            paginacijaRezultata(rangirana_lista)
+                        elif "or" not in kriterijumArray and "and" in kriterijumArray and "not" not in kriterijumArray:
+                            kriterijumArray.remove("and")
+                            slozenijaPretraga(kriterijumArray, "AND")
+                            rangirana_lista = rangirajSkup(kriterijumArray)
+                            paginacijaRezultata(rangirana_lista)
+                        elif "or" not in kriterijumArray and "and" not in kriterijumArray and kriterijumArray[0] == "not":
+                            kriterijumArray.remove("not")
+                            slozenijaPretraga(kriterijumArray, "KOMPLEMENT")
+                            rangirana_lista = rangirajSkup(kriterijumArray)
+                            paginacijaRezultata(rangirana_lista)
+                        elif "or" not in kriterijumArray and "and" not in kriterijumArray and "not" in kriterijumArray:
+                            kriterijumArray.remove("not")
+                            slozenijaPretraga(kriterijumArray, "NOT")
+                            rangirana_lista = rangirajSkup(kriterijumArray)
+                            paginacijaRezultata(rangirana_lista)
+        elif nacin_pretrage == "2":
+            while (True):
+                kriterijum = input("Unesite kriterijum napredne pretrage ili X za izlazak: ")
+                if kriterijum != "X":
+                    kriterijumArray = re.split(' ', kriterijum.lower())
+                    postfix = infixToPostfixGenerator(kriterijum)
+                    root = kreirajStablo(postfix)
+                    globalVar.RESULT_SET = evaluacijaStabla(root)
+                    if kriterijumArray.__contains__("&&"):
+                        kriterijumArray.remove("&&")
+                    if kriterijumArray.__contains__("||"):
+                        kriterijumArray.remove("||")
+                    if kriterijumArray.__contains__("!"):
+                        kriterijumArray.remove("!")
+                    if kriterijumArray.__contains__(")"):
+                        kriterijumArray.remove(")")
+                    if kriterijumArray.__contains__("("):
+                        kriterijumArray.remove("(")
+                    rangirana_lista = rangirajSkup(kriterijumArray)
+                    paginacijaRezultata(rangirana_lista)
+                else:
+                    break
+        elif nacin_pretrage == "X" or nacin_pretrage == "x":
             sys.exit()
-        else:
-            br_pod = input("Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
-                           "ce rangiranje biti sporije): ")
-            broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
-            globalVar.n = broj_podredjenih
-            print("Kriterijum pregrate ", kriterijumArray)
-            if "" in kriterijumArray or len(kriterijumArray) > 3 or (
-                    len(kriterijumArray) == 2 and kriterijumArray[0] != "not" and (
-                    kriterijumArray[0] == "or" or kriterijumArray[0] == "and" or kriterijumArray[1] == "not" or
-                    kriterijumArray[1] == "and" or kriterijumArray[1] == "or")) or (len(kriterijumArray) == 3 and (
-                    kriterijumArray[1] != "not" and kriterijumArray[1] != "and" and kriterijumArray[1] != "or")):
-                print("\nPogresan unos! Moguci razlozi:")
-                print(
-                    "-Kriterijum je prazan ili ima prazan string u sebi.\n-Kriterijum ima vise od 2 kriterijuma pretrage u osnovnoj pretragi")
-                print("FORMAT: [KRITERIJUM] ili [ KRITERIJUM1 [OR " " AND NOT] KRITERIJUM2 ] ili [ NOT KRITERIJUM1 ]\n")
-            else:
-                if "or" not in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
-                    obicnaPretraga(kriterijumArray)
-                    start = time.time()
-                    rangirana_lista = rangirajSkup(kriterijumArray)
-                    stop = time.time();
-                    print(stop - start)
-                    paginacijaRezultata(rangirana_lista)
-                elif "or" in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
-                    kriterijumArray.remove("or")
-                    obicnaPretraga(kriterijumArray)
-                    rangirana_lista = rangirajSkup(kriterijumArray)
-                    paginacijaRezultata(rangirana_lista)
-                elif "or" not in kriterijumArray and "and" in kriterijumArray and "not" not in kriterijumArray:
-                    kriterijumArray.remove("and")
-                    slozenijaPretraga(kriterijumArray, "AND")
-                    rangirana_lista = rangirajSkup(kriterijumArray)
-                    paginacijaRezultata(rangirana_lista)
-                elif "or" not in kriterijumArray and "and" not in kriterijumArray and kriterijumArray[0] == "not":
-                    kriterijumArray.remove("not")
-                    slozenijaPretraga(kriterijumArray, "KOMPLEMENT")
-                    rangirana_lista = rangirajSkup(kriterijumArray)
-                    paginacijaRezultata(rangirana_lista)
-                elif "or" not in kriterijumArray and "and" not in kriterijumArray and "not" in kriterijumArray:
-                    kriterijumArray.remove("not")
-                    slozenijaPretraga(kriterijumArray, "NOT")
-                    rangirana_lista = rangirajSkup(kriterijumArray)
-                    paginacijaRezultata(rangirana_lista)

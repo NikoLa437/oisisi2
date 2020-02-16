@@ -15,12 +15,12 @@ def obicnaPretraga(kriterijum):
 
 def slozenijaPretraga(kriterijum, operacija):
     globalVar.RESULT_SET = Skup()
-    RESULT_SKUP = []
+    globalVar.RESULT_SKUP = []
     if operacija=="AND":
         for uslov in kriterijum:
             bool, skup = globalVar.GLOBAL_TRIE.search(uslov.lower())
             if bool == "True":
-                RESULT_SKUP.append(skup)  # niz skupova koji sadrze html dokumente koji ispunjavaju uslov
+                globalVar.RESULT_SKUP.append(skup)  # niz skupova koji sadrze html dokumente koji ispunjavaju uslov
                 globalVar.RESULT_SET= skup # postavljam bilo koji skup kao result set da posle ne bi isao prazan skup na AND operaciju!
         for file in globalVar.RESULT_SKUP:  # prolazimo kroz skup skupova html dokumenata koji ispunjavaju uslov i radimo logicko | za obicnu pretragu
             globalVar.RESULT_SET = globalVar.RESULT_SET & file  # odradjuje se or metoda nad skupovima

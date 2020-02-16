@@ -1,3 +1,5 @@
+import globalVar
+from Skup import Skup
 from stack import *
 
 class TreeNode: # cvor stabla koje cemo kreirati
@@ -43,6 +45,29 @@ def kreirajStablo(postfix):
         t = stek.pop() # kada prodje kroz for u steku ce se nalaziti samo root
 
         return t
+
+def evaluacijaStabla(root):
+
+    if root is None:
+        return None
+
+    if root.left is None and root.right is None:
+        bool, skup = globalVar.GLOBAL_TRIE.search(root.value)
+        if bool == "True":
+            return skup
+        else:
+            return Skup()
+
+    levo_podstablo = evaluacijaStabla(root.left)
+
+    desno_podstablo = evaluacijaStabla(root.right)
+
+    if root.value == "&&":
+        return levo_podstablo & desno_podstablo
+    elif root.value == "||":
+        return levo_podstablo | desno_podstablo
+    elif root.value == "!":
+        return levo_podstablo.komplement(globalVar.NADSKUP)
 
 def infixToPostfixGenerator(kriterijum): # proveriti da li brojac dobro radi!!!
     priority = {} # recnik koji cuva prioritete
