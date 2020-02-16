@@ -12,7 +12,7 @@ from parrser import Parser
 from pretrage import *
 
 broj_podredjenih = 0.05
-
+#html_list = []
 def ucitajPodatke(putanja):
     start = time.time()
     parser = Parser()
@@ -60,8 +60,14 @@ def rangirajSkup(niz_reci):
 
     del nova_mapa #vise nam nije potrebna
     # rangiranje na osnovu broja linkova
+    """for el in mapa_prikaza:
+        mapa_prikaza[el] = mapa_prikaza[el] + GRAPH.get_incoming(el).__len__()"""
     for el in mapa_prikaza:
-        mapa_prikaza[el] = mapa_prikaza[el] + GRAPH.get_incoming(el).__len__()
+        for ulazna in GRAPH.get_incoming(el):
+            if globalVar.RESULT_SET.__contains__(ulazna):
+                mapa_prikaza[el] += 1 # svaki link koji sadrzi trazenu rec rang += 1
+            else:
+                mapa_prikaza[el] += 0.5 # svaki link koji ne sadrzi trazenu rec rang += 0.5
 
     for el in mapa_prikaza:
         retVal.append(rangiranje.Prikaz(el, mapa_prikaza[el]))
@@ -124,10 +130,20 @@ def ispisiRezultate(lista_prikaz, pocetak, kraj):
     for i in range(pocetak, kraj, 1):
         print("%5s" % str(i + 1) + ".", "%8.2f" % lista_prikaz[i].get_rang(), lista_prikaz[i].get_stranica())
 
+#funkcija za pronalazak html fajlova
+"""def prodji(putanja):
+    dirs = os.listdir(putanja)
+    for dir in dirs:
+        if os.path.isdir(putanja + "\\" + dir):
+            prodji(putanja + "\\" + dir)
+        else:
+            if dir.endswith(".html"):
+                html_list.append(putanja + "\\" + dir)"""
 
 if __name__ == '__main__':
     while (True):
         putanja = input("Unesi putanju(X za izlaz): ")
+        #prodji(putanja)
         ucitajPodatke(putanja)
         if putanja == "X":
             sys.exit()
