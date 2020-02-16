@@ -22,7 +22,7 @@ def ucitajPodatke(putanja):
         GRAPH.add_from_html(file, links)  # ===========================================================za duleta
         for word in words:
             GLOBAL_TRIE.add_word(word.lower(), file)
-            NADSKUP.add(file, 0)
+        NADSKUP.add(file, 0)
     end = time.time()
     print(end - start)
 
