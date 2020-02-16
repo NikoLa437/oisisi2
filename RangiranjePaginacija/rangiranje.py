@@ -1,7 +1,7 @@
-import globalVar
+from Ostalo import globalVar
 import copy
 
-from mergeSort import mergeSort
+from Ostalo.mergeSort import mergeSort
 
 
 class Prikaz:

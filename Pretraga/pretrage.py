@@ -1,4 +1,4 @@
-import globalVar
+from Ostalo import globalVar
 from StrukturePodataka.Skup import Skup
 
 def slozenijaPretraga(kriterijum, operacija):

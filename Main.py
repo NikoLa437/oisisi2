@@ -5,8 +5,8 @@ import sys
 import time
 
 from RangiranjePaginacija import paginacija, rangiranje
-from globalVar import GLOBAL_TRIE
-from parrser import Parser
+from Ostalo.globalVar import GLOBAL_TRIE
+from Ostalo.parrser import Parser
 from Pretraga.parsiranjeUslova import infixToPostfixGenerator, kreirajStablo, evaluacijaStabla
 from Pretraga.pretrage import *
 
