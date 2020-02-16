@@ -217,7 +217,7 @@ if __name__ == '__main__':
                         broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
                         globalVar.n = broj_podredjenih
                         if "or" not in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
-                            obicnaPretraga(kriterijumArray)
+                            slozenijaPretraga(kriterijumArray, "OR")
                             start = time.time()
                             rangirana_lista = rangirajSkup(kriterijumArray)
                             stop = time.time();
@@ -225,7 +225,7 @@ if __name__ == '__main__':
                             paginacijaRezultata(rangirana_lista)
                         elif "or" in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
                             kriterijumArray.remove("or")
-                            obicnaPretraga(kriterijumArray)
+                            slozenijaPretraga(kriterijumArray, "OR")
                             rangirana_lista = rangirajSkup(kriterijumArray)
                             paginacijaRezultata(rangirana_lista)
                         elif "or" not in kriterijumArray and "and" in kriterijumArray and "not" not in kriterijumArray:
