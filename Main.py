@@ -146,10 +146,47 @@ def ispisiRezultate(lista_prikaz, pocetak, kraj):
             if dir.endswith(".html"):
                 html_list.append(putanja + "\\" + dir)"""
 
+def validacijaUnosaObicnaPretraga(kriterijumArray):
+    if(len(kriterijumArray)>3):
+        print("POGRESAN UNOS")
+        print("Uneli ste vise od 2 kriterijuma pretrage")
+        return False
+    elif(len(kriterijumArray)==1 and (kriterijumArray[0]=="and" or kriterijumArray[0]=="or" or kriterijumArray[0]=="not")):
+        print("POGRESAN UNOS")
+        print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)1")
+        return False
+    elif(len(kriterijumArray)==2 and kriterijumArray[0] != "not" and (kriterijumArray[0]=="and" or kriterijumArray[0]=="or" or kriterijumArray[1]=="and" or kriterijumArray[1]=="or" or kriterijumArray[1]=="not")):
+        print("POGRESAN UNOS")
+        print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)2")
+        return False
+    elif(len(kriterijumArray)==2 and kriterijumArray[0]== "not" and (kriterijumArray[1]=="and" or kriterijumArray[1]=="or" or kriterijumArray[1]=="not")):
+        print("POGRESAN UNOS")
+        print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)3")
+        return False
+    elif(len(kriterijumArray)==3):
+        print(kriterijumArray)
+        if(kriterijumArray[0]=="and" or kriterijumArray[0]=="or" or kriterijumArray[0]=="not"):
+            print("POGRESAN UNOS")
+            print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)4")
+            return False
+        elif(kriterijumArray[2]=="and" or kriterijumArray[2]=="or" or kriterijumArray[2]=="not"):
+            print("POGRESAN UNOS")
+            print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)5")
+            return False
+        elif(kriterijumArray[1]!="and" and kriterijumArray[1]!="or" and kriterijumArray[1]!="not"):
+            print("POGRESAN UNOS")
+            print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)6")
+            return False
+        else:
+            return True
+    else:
+        return True
+
+
+
 if __name__ == '__main__':
     while (True):
         putanja = input("Unesi putanju(X za izlaz): ")
-        #prodji(putanja)
         ucitajPodatke(putanja)
         if putanja == "X":
             sys.exit()
@@ -173,21 +210,12 @@ if __name__ == '__main__':
                 if kriterijum == "X":
                     break
                 else:
-                    br_pod = input("Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
-                                   "ce rangiranje biti sporije): ")
-                    broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
-                    globalVar.n = broj_podredjenih
-                    print("Kriterijum pregrate ", kriterijumArray)
-                    if "" in kriterijumArray or len(kriterijumArray) > 3 or (
-                            len(kriterijumArray) == 2 and kriterijumArray[0] != "not" and (
-                            kriterijumArray[0] == "or" or kriterijumArray[0] == "and" or kriterijumArray[1] == "not" or
-                            kriterijumArray[1] == "and" or kriterijumArray[1] == "or")) or (len(kriterijumArray) == 3 and (
-                            kriterijumArray[1] != "not" and kriterijumArray[1] != "and" and kriterijumArray[1] != "or")):
-                        print("\nPogresan unos! Moguci razlozi:")
-                        print(
-                            "-Kriterijum je prazan ili ima prazan string u sebi.\n-Kriterijum ima vise od 2 kriterijuma pretrage u osnovnoj pretragi")
-                        print("FORMAT: [KRITERIJUM] ili [ KRITERIJUM1 [OR " " AND NOT] KRITERIJUM2 ] ili [ NOT KRITERIJUM1 ]\n")
-                    else:
+                    if validacijaUnosaObicnaPretraga(kriterijumArray):
+                        br_pod = input(
+                            "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                            "ce rangiranje biti sporije): ")
+                        broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
+                        globalVar.n = broj_podredjenih
                         if "or" not in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
                             obicnaPretraga(kriterijumArray)
                             start = time.time()
@@ -218,12 +246,12 @@ if __name__ == '__main__':
         elif nacin_pretrage == "2":
             while (True):
                 kriterijum = input("Unesite kriterijum napredne pretrage ili X za izlazak: ")
-                br_pod = input(
-                    "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
-                    "ce rangiranje biti sporije): ")
-                broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
-                globalVar.n = broj_podredjenih
                 if kriterijum != "X":
+                    br_pod = input(
+                        "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                        "ce rangiranje biti sporije): ")
+                    broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
+                    globalVar.n = broj_podredjenih
                     kriterijumArray = re.split(' ', kriterijum.lower())
                     postfix = infixToPostfixGenerator(kriterijum)
                     root = kreirajStablo(postfix)
