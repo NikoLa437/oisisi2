@@ -106,6 +106,42 @@ def validacijaUnosaObicnaPretraga(kriterijumArray):
     else:
         return True
 
+def validacijaUnosaSlozenaPretraga(kriterijumArray):
+    print(kriterijumArray)
+    if kriterijumArray[0] == "||" or kriterijumArray[0] == "&&": # ne dozvoljava da krene sa && ili ||
+        print("POGRESAN UNOS")
+        print("Prvi i poslednji string u naprednoj pretrazi ne moze biti && ili ||")
+        return False
+    elif kriterijumArray[len(kriterijumArray)-1] == "||" or kriterijumArray[len(kriterijumArray)-1] == "!" or kriterijumArray[len(kriterijumArray)-1] == "&&":
+        print("POGRESAN UNOS") # ne dozvoljava da se pretraga zavrsava sa || && ili !
+        print("Prvi i poslednji string u naprednoj pretrazi ne moze biti && ili ||")
+        return False
+    elif kriterijumArray.count("(") != kriterijumArray.count(")"): # broj otvorenih i zatvorenih zagrada mora biti isti
+        print("POGRESAN UNOS")
+        print("Broj ( mora biti jednak broju ) u izrazu")
+        return False
+    else:
+        prolaz = True
+        operators= ["&&" , "||" , "!"]
+        operators2 = ["&&" ,"||"]
+        for i in range(1,len(kriterijumArray)-1):
+            if(kriterijumArray[0]=="!" and (kriterijumArray[1] == "||" or kriterijumArray[1] =="&&")):
+                print("POGRESAN UNOS")
+                print("Ukoliko je prvi string ! drugi ne sme biti || ili &&")
+                prolaz=False
+                break
+            elif(kriterijumArray[i] in operators2 and kriterijumArray[i+1] in operators2):
+                print("POGRESAN UNOS")
+                print("Nakon && ili || ne sme ici && ili ||")
+                prolaz = False
+                break
+            elif(kriterijumArray[i] == "!" and kriterijumArray[i+1] in operators):
+                print("POGRESAN UNOS")
+                print("Nakon ! ne sme ici && , || ili !")
+                prolaz = False
+                break
+
+        return prolaz
 
 
 if __name__ == '__main__':
@@ -170,28 +206,29 @@ if __name__ == '__main__':
         elif nacin_pretrage == "2":
             while True:
                 kriterijum = input("Unesite kriterijum napredne pretrage ili X za izlazak: ")
+                kriterijumArray = re.split(' ', kriterijum.lower())
                 if kriterijum != "X":
-                    br_pod = input(
-                        "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
-                        "ce rangiranje biti sporije): ")
-                    globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
-                    globalVar.n = globalVar.broj_podredjenih
-                    kriterijumArray = re.split(' ', kriterijum.lower())
-                    postfix = infixToPostfixGenerator(kriterijum)
-                    root = kreirajStablo(postfix)
-                    globalVar.RESULT_SET = evaluacijaStabla(root)
-                    if "&&" in kriterijumArray:
-                        kriterijumArray.remove("&&")
-                    if "||" in kriterijumArray:
-                        kriterijumArray.remove("||")
-                    if "!" in kriterijumArray:
-                        kriterijumArray.remove("!")
-                    if ")" in kriterijumArray:
-                        kriterijumArray.remove(")")
-                    if "(" in kriterijumArray:
-                        kriterijumArray.remove("(")
-                    rangirana_lista = rangiranje.rangirajSkup(kriterijumArray)
-                    paginacija.paginacijaRezultata(rangirana_lista)
+                    if validacijaUnosaSlozenaPretraga(kriterijumArray):
+                        br_pod = input(
+                            "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                            "ce rangiranje biti sporije): ")
+                        globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
+                        globalVar.n = globalVar.broj_podredjenih
+                        postfix = infixToPostfixGenerator(kriterijum)
+                        root = kreirajStablo(postfix)
+                        globalVar.RESULT_SET = evaluacijaStabla(root)
+                        if "&&" in kriterijumArray:
+                            kriterijumArray.remove("&&")
+                        if "||" in kriterijumArray:
+                            kriterijumArray.remove("||")
+                        if "!" in kriterijumArray:
+                            kriterijumArray.remove("!")
+                        if ")" in kriterijumArray:
+                            kriterijumArray.remove(")")
+                        if "(" in kriterijumArray:
+                            kriterijumArray.remove("(")
+                        rangirana_lista = rangiranje.rangirajSkup(kriterijumArray)
+                        paginacija.paginacijaRezultata(rangirana_lista)
                 else:
                     break
         elif nacin_pretrage == "X" or nacin_pretrage == "x":
