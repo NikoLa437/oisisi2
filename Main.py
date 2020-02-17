@@ -16,16 +16,37 @@ def ucitajPodatke(putanja):
     start = time.time()
     parser = Parser()
     files = glob.glob(putanja + '/**/*.html', recursive=True)
+    i = 0
+    duzina = files.__len__()-1
     for file in files:
         links, words = parser.parse(file)
         globalVar.GRAPH.add_from_html(file, links)  # ===========================================================za duleta
         for word in words:
             globalVar.GLOBAL_TRIE.add_word(word.lower(), file)
         globalVar.NADSKUP.add(file, 0)
+        update_progress(round(i/duzina,4))
+        i+=1
     end = time.time()
     print(end - start)
 
-
+def update_progress(progress):
+    barLength = 100 # Modify this to change the length of the progress bar
+    status = ""
+    if isinstance(progress, int):
+        progress = float(progress)
+    if not isinstance(progress, float):
+        progress = 0
+        status = "error: progress var must be float\r\n"
+    if progress < 0:
+        progress = 0
+        status = "Halt...\r\n"
+    if progress >= 1:
+        progress = 1
+        status = "Done...\r\n"
+    block = int(barLength*progress)
+    text = "\rLoading: [{0}] {1}% {2}".format( "#"*block + "-"*(barLength-block), round(progress*100,2), status)
+    sys.stdout.write(text)
+    sys.stdout.flush()
 # cuvam za svaki slucaj sa os.walk
 """
 for root, dirs, files in os.walk(putanja):
@@ -159,15 +180,15 @@ if __name__ == '__main__':
                     postfix = infixToPostfixGenerator(kriterijum)
                     root = kreirajStablo(postfix)
                     globalVar.RESULT_SET = evaluacijaStabla(root)
-                    if kriterijumArray.__contains__("&&"):
+                    if "&&" in kriterijumArray:
                         kriterijumArray.remove("&&")
-                    if kriterijumArray.__contains__("||"):
+                    if "||" in kriterijumArray:
                         kriterijumArray.remove("||")
-                    if kriterijumArray.__contains__("!"):
+                    if "!" in kriterijumArray:
                         kriterijumArray.remove("!")
-                    if kriterijumArray.__contains__(")"):
+                    if ")" in kriterijumArray:
                         kriterijumArray.remove(")")
-                    if kriterijumArray.__contains__("("):
+                    if "(" in kriterijumArray:
                         kriterijumArray.remove("(")
                     rangirana_lista = rangiranje.rangirajSkup(kriterijumArray)
                     paginacija.paginacijaRezultata(rangirana_lista)

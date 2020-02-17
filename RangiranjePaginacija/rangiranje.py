@@ -45,7 +45,7 @@ def drugo_rangiranje(mapa_prikaza, lista_ulaznih_cvorova, mnozilac, graph):
     # prolazimo kroz sve ulazne grane cvora
     for cvor in lista_ulaznih_cvorova:
         i += 1  # koristimo za proveru kraja
-        if mapa_prikaza.keys().__contains__(cvor):
+        if cvor in mapa_prikaza.keys():
             if mnozilac < globalVar.n:
                 zbir += mapa_prikaza[cvor]  # bazni slucaj, odnosno kada dodjemo do poslednjeg reda cvora koji utice
                                             # na rang
