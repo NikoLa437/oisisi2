@@ -79,7 +79,7 @@ def infixToPostfixGenerator(kriterijum): # proveriti da li brojac dobro radi!!!
     stek= Stack();
     result = []
     #print(kriterijum)
-    kriterijum= kriterijum.split()
+    #kriterijum= kriterijum.split()
     #print(kriterijum)
     brojac = 0 # ukoliko se obicna rec u kriterijumu javi vise od 1 puta znaci da imamo test1 test2 (nije navedeno || izmedju) i moramo uzeti u obrzir
 
