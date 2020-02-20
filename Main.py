@@ -9,9 +9,8 @@ from Ostalo.globalVar import GLOBAL_TRIE
 from Ostalo.parrser import Parser
 from Pretraga.parsiranjeUslova import infixToPostfixGenerator, kreirajStablo, evaluacijaStabla
 from Pretraga.pretrage import *
+from Ostalo.validacijaUnosa import *
 
-
-#html_list = []
 def ucitajPodatke(putanja):
     start = time.time()
     parser = Parser()
@@ -70,81 +69,10 @@ for root, dirs, files in os.walk(putanja):
             if dir.endswith(".html"):
                 html_list.append(putanja + "\\" + dir)"""
 
-def validacijaUnosaObicnaPretraga(kriterijumArray):
-    if(len(kriterijumArray)>3):
-        print("POGRESAN UNOS")
-        print("Uneli ste vise od 2 kriterijuma pretrage")
-        return False
-    elif(len(kriterijumArray)==1 and (kriterijumArray[0]=="and" or kriterijumArray[0]=="or" or kriterijumArray[0]=="not")):
-        print("POGRESAN UNOS")
-        print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)1")
-        return False
-    elif(len(kriterijumArray)==2 and kriterijumArray[0] != "not" and (kriterijumArray[0]=="and" or kriterijumArray[0]=="or" or kriterijumArray[1]=="and" or kriterijumArray[1]=="or" or kriterijumArray[1]=="not")):
-        print("POGRESAN UNOS")
-        print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)2")
-        return False
-    elif(len(kriterijumArray)==2 and kriterijumArray[0]== "not" and (kriterijumArray[1]=="and" or kriterijumArray[1]=="or" or kriterijumArray[1]=="not")):
-        print("POGRESAN UNOS")
-        print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)3")
-        return False
-    elif(len(kriterijumArray)==3):
-        print(kriterijumArray)
-        if(kriterijumArray[0]=="and" or kriterijumArray[0]=="or" or kriterijumArray[0]=="not"):
-            print("POGRESAN UNOS")
-            print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)4")
-            return False
-        elif(kriterijumArray[2]=="and" or kriterijumArray[2]=="or" or kriterijumArray[2]=="not"):
-            print("POGRESAN UNOS")
-            print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)5")
-            return False
-        elif(kriterijumArray[1]!= "and" and kriterijumArray[1]!= "or" and kriterijumArray[1]!= "not"):
-            print("POGRESAN UNOS")
-            print("Uneli ste u uslov pretrage neku od rezervisanih reci za operacije(or,and,not)6")
-            return False
-        else:
-            return True
-    else:
-        return True
-
-def validacijaUnosaSlozenaPretraga(kriterijumArray):
-    print(kriterijumArray)
-    if kriterijumArray[0] == "||" or kriterijumArray[0] == "&&": # ne dozvoljava da krene sa && ili ||
-        print("POGRESAN UNOS")
-        print("Prvi i poslednji string u naprednoj pretrazi ne moze biti && ili ||")
-        return False
-    elif kriterijumArray[len(kriterijumArray)-1] == "||" or kriterijumArray[len(kriterijumArray)-1] == "!" or kriterijumArray[len(kriterijumArray)-1] == "&&":
-        print("POGRESAN UNOS") # ne dozvoljava da se pretraga zavrsava sa || && ili !
-        print("Prvi i poslednji string u naprednoj pretrazi ne moze biti && ili ||")
-        return False
-    elif kriterijumArray.count("(") != kriterijumArray.count(")"): # broj otvorenih i zatvorenih zagrada mora biti isti
-        print("POGRESAN UNOS")
-        print("Broj ( mora biti jednak broju ) u izrazu")
-        return False
-    else:
-        prolaz = True
-        operators= ["&&" , "||" , "!"]
-        operators2 = ["&&" ,"||"]
-        for i in range(1,len(kriterijumArray)-1):
-            if(kriterijumArray[0]=="!" and (kriterijumArray[1] == "||" or kriterijumArray[1] =="&&")):
-                print("POGRESAN UNOS")
-                print("Ukoliko je prvi string ! drugi ne sme biti || ili &&")
-                prolaz=False
-                break
-            elif(kriterijumArray[i] in operators2 and kriterijumArray[i+1] in operators2):
-                print("POGRESAN UNOS")
-                print("Nakon && ili || ne sme ici && ili ||")
-                prolaz = False
-                break
-            elif(kriterijumArray[i] == "!" and kriterijumArray[i+1] in operators):
-                print("POGRESAN UNOS")
-                print("Nakon ! ne sme ici && , || ili !")
-                prolaz = False
-                break
-
-        return prolaz
-
 
 if __name__ == '__main__':
+
+    print(sys.platform)
     while True:
         putanja = input("Unesi putanju(X za izlaz): ")
         ucitajPodatke(putanja)
@@ -206,7 +134,8 @@ if __name__ == '__main__':
         elif nacin_pretrage == "2":
             while True:
                 kriterijum = input("Unesite kriterijum napredne pretrage ili X za izlazak: ")
-                kriterijumArray = re.split(' ', kriterijum.lower())
+                kriterijumArray = parsirajNapredniUnos(kriterijum)
+                print(kriterijumArray)
                 if kriterijum != "X":
                     if validacijaUnosaSlozenaPretraga(kriterijumArray):
                         br_pod = input(
@@ -214,7 +143,7 @@ if __name__ == '__main__':
                             "ce rangiranje biti sporije): ")
                         globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
                         globalVar.n = globalVar.broj_podredjenih
-                        postfix = infixToPostfixGenerator(kriterijum)
+                        postfix = infixToPostfixGenerator(kriterijumArray)
                         root = kreirajStablo(postfix)
                         globalVar.RESULT_SET = evaluacijaStabla(root)
                         if "&&" in kriterijumArray:
@@ -233,3 +162,4 @@ if __name__ == '__main__':
                     break
         elif nacin_pretrage == "X" or nacin_pretrage == "x":
             sys.exit()
+            #( test && java ) && ! test || !(test||java)
