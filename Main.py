@@ -1,4 +1,9 @@
 # from globalVar import *
+import parser
+
+import os
+from pathlib import Path
+
 import glob
 import re
 import sys
@@ -11,7 +16,26 @@ from Pretraga.parsiranjeUslova import infixToPostfixGenerator, kreirajStablo, ev
 from Pretraga.pretrage import *
 from Ostalo.validacijaUnosa import *
 
-def ucitajPodatke(putanja):
+
+"""def ucitajPodatke(putanja):
+    start = time.time()
+    parser = Parser()
+    i = 0
+    for root, dirs, files in os.walk(putanja):
+        #duzina = files.__len__()-1
+        for file in files:
+            if (file.endswith('html')):
+                f= root+ "\\" + file
+                links, words = parser.parse(f)
+                globalVar.GRAPH.add_from_html(f, links)  # ===========================================================za duleta
+                for word in words:
+                    globalVar.GLOBAL_TRIE.add_word(word.lower(), f)
+                globalVar.NADSKUP.add(f, 0)
+                #update_progress(round(i/duzina,4))
+                #i+=1
+    end = time.time()
+    print(end - start)"""
+"""def ucitajPodatke(putanja):
     start = time.time()
     parser = Parser()
     files = glob.glob(putanja + '/**/*.html', recursive=True)
@@ -26,7 +50,7 @@ def ucitajPodatke(putanja):
         update_progress(round(i/duzina,4))
         i+=1
     end = time.time()
-    print(end - start)
+    print(end - start)"""
 
 def update_progress(progress):
     barLength = 100 # Modify this to change the length of the progress bar
@@ -58,24 +82,33 @@ for root, dirs, files in os.walk(putanja):
                     t.add_word(word.lower())
                     MAPA_TRIE[os.path.join(root, file)] = t
 """
-
+parser = Parser()
 #funkcija za pronalazak html fajlova
-"""def prodji(putanja):
+def ucitajPodatke(putanja):
     dirs = os.listdir(putanja)
     for dir in dirs:
         if os.path.isdir(putanja + "\\" + dir):
-            prodji(putanja + "\\" + dir)
+            ucitajPodatke(putanja + "\\" + dir)
         else:
             if dir.endswith(".html"):
-                html_list.append(putanja + "\\" + dir)"""
+                f = putanja + "\\" + dir
+                links, words = parser.parse(f)
+                globalVar.GRAPH.add_from_html(f, links)
+                for word in words:
+                    globalVar.GLOBAL_TRIE.add_word(word.lower(), f)
+                globalVar.NADSKUP.add(f, 0)
 
-
+"""        if Path(putanja + "\\" + dir).is_dir():
+            ucitajPodatke(putanja + "\\" + dir)"""
 if __name__ == '__main__':
 
     print(sys.platform)
     while True:
         putanja = input("Unesi putanju(X za izlaz): ")
+        start = time.time()
         ucitajPodatke(putanja)
+        end = time.time()
+        print(end - start)
         if putanja == "X":
             sys.exit()
         elif not bool(GLOBAL_TRIE):
