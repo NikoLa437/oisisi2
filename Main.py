@@ -85,12 +85,14 @@ def update_progress(progress):
 #funkcija za pronalazak html fajlova
 def prodji(putanja):
     dirs = os.listdir(putanja)
+    delimiter = chr(92)
     for dir in dirs:
-        if os.path.isdir(putanja + "\\" + dir):
-            prodji(putanja + "\\" + dir)
+        if os.path.isdir(putanja + delimiter + dir):
+            prodji(putanja + delimiter + dir)
         else:
             if dir.endswith(".html"):
-                html_list.append(putanja + "\\" + dir)
+                delimiter = chr(92)
+                html_list.append(putanja + delimiter + dir)
     return html_list
 
 if __name__ == '__main__':
