@@ -1,13 +1,9 @@
 # from globalVar import *
-import parser
-
-import os
-from pathlib import Path
-
 import glob
 import re
 import sys
 import time
+import os
 
 from RangiranjePaginacija import paginacija, rangiranje
 from Ostalo.globalVar import GLOBAL_TRIE
@@ -15,7 +11,24 @@ from Ostalo.parrser import Parser
 from Pretraga.parsiranjeUslova import infixToPostfixGenerator, kreirajStablo, evaluacijaStabla
 from Pretraga.pretrage import *
 from Ostalo.validacijaUnosa import *
+html_list= []
 
+"""def ucitajPodatke(putanja):
+    start = time.time()
+    parser = Parser()
+    files = glob.glob(putanja + '/**/*.html', recursive=True)
+    i = 0
+    duzina = files.__len__()-1
+    for file in files:
+        links, words = parser.parse(file)
+        globalVar.GRAPH.add_from_html(file, links)  # ===========================================================za duleta
+        for word in words:
+            globalVar.GLOBAL_TRIE.add_word(word.lower(), file)
+        globalVar.NADSKUP.add(file, 0)
+        #update_progress(round(i/duzina,4))
+        i+=1
+    end = time.time()
+    print(end - start)"""
 
 """def ucitajPodatke(putanja):
     start = time.time()
@@ -35,22 +48,20 @@ from Ostalo.validacijaUnosa import *
                 #i+=1
     end = time.time()
     print(end - start)"""
-"""def ucitajPodatke(putanja):
-    start = time.time()
+
+def ucitajPodatke(putanja):
     parser = Parser()
-    files = glob.glob(putanja + '/**/*.html', recursive=True)
-    i = 0
-    duzina = files.__len__()-1
-    for file in files:
-        links, words = parser.parse(file)
-        globalVar.GRAPH.add_from_html(file, links)  # ===========================================================za duleta
+    #prodji(putanja)
+    #i = 0
+    #duzina = html_list.__len__() - 1
+    for path in prodji(putanja):
+        links, words = parser.parse(path)
+        globalVar.GRAPH.add_from_html(path, links)  # ===========================================================za duleta
         for word in words:
-            globalVar.GLOBAL_TRIE.add_word(word.lower(), file)
-        globalVar.NADSKUP.add(file, 0)
-        update_progress(round(i/duzina,4))
-        i+=1
-    end = time.time()
-    print(end - start)"""
+            globalVar.GLOBAL_TRIE.add_word(word.lower(), path)
+        globalVar.NADSKUP.add(path, 0)
+        #update_progress(round(i/duzina,4))
+        #i+=1
 
 def update_progress(progress):
     barLength = 100 # Modify this to change the length of the progress bar
@@ -70,45 +81,27 @@ def update_progress(progress):
     text = "\rLoading: [{0}] {1}% {2}".format( "#"*block + "-"*(barLength-block), round(progress*100,2), status)
     sys.stdout.write(text)
     sys.stdout.flush()
-# cuvam za svaki slucaj sa os.walk
-"""
-for root, dirs, files in os.walk(putanja):
-        for file in files:
-            if file.endswith('.html'):
-                links, words = parser.parse(os.path.join(root, file))
-                t = Trie()
-                GRAPH.add_from_html(os.path.join(root, file), links)
-                for word in words:
-                    t.add_word(word.lower())
-                    MAPA_TRIE[os.path.join(root, file)] = t
-"""
-parser = Parser()
+
 #funkcija za pronalazak html fajlova
-def ucitajPodatke(putanja):
+def prodji(putanja):
     dirs = os.listdir(putanja)
     for dir in dirs:
         if os.path.isdir(putanja + "\\" + dir):
-            ucitajPodatke(putanja + "\\" + dir)
+            prodji(putanja + "\\" + dir)
         else:
             if dir.endswith(".html"):
-                f = putanja + "\\" + dir
-                links, words = parser.parse(f)
-                globalVar.GRAPH.add_from_html(f, links)
-                for word in words:
-                    globalVar.GLOBAL_TRIE.add_word(word.lower(), f)
-                globalVar.NADSKUP.add(f, 0)
+                html_list.append(putanja + "\\" + dir)
+    return html_list
 
-"""        if Path(putanja + "\\" + dir).is_dir():
-            ucitajPodatke(putanja + "\\" + dir)"""
 if __name__ == '__main__':
 
     print(sys.platform)
     while True:
         putanja = input("Unesi putanju(X za izlaz): ")
-        start = time.time()
+        start= time.time()
         ucitajPodatke(putanja)
         end = time.time()
-        print(end - start)
+        print(end-start)
         if putanja == "X":
             sys.exit()
         elif not bool(GLOBAL_TRIE):
