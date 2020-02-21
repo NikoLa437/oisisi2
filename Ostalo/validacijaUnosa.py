@@ -1,3 +1,5 @@
+import re
+
 def validacijaUnosaObicnaPretraga(kriterijumArray):
     if(len(kriterijumArray)>3 or "" in kriterijumArray):
         print("POGRESAN UNOS")
