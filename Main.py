@@ -8,7 +8,7 @@ import os
 from RangiranjePaginacija import paginacija, rangiranje
 from Ostalo.globalVar import GLOBAL_TRIE
 from Ostalo.parrser import Parser
-from Pretraga.parsiranjeUslova import infixToPostfixGenerator, kreirajStablo, evaluacijaStabla
+from Pretraga.parsiranjeUslova import infixToPostfixGenerator, kreirajStablo, evaluacijaStabla, parsirajNapredniUnos
 from Pretraga.pretrage import *
 from Ostalo.validacijaUnosa import *
 html_list= []
@@ -167,32 +167,35 @@ if __name__ == '__main__':
         elif nacin_pretrage == "2":
             while True:
                 kriterijum = input("Unesite kriterijum napredne pretrage ili X za izlazak: ")
-                kriterijumArray = parsirajNapredniUnos(kriterijum)
-                print(kriterijumArray)
-                if kriterijum != "X":
-                    if validacijaUnosaSlozenaPretraga(kriterijumArray):
-                        br_pod = input(
-                            "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
-                            "ce rangiranje biti sporije): ")
-                        globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
-                        globalVar.n = globalVar.broj_podredjenih
-                        postfix = infixToPostfixGenerator(kriterijumArray)
-                        root = kreirajStablo(postfix)
-                        globalVar.RESULT_SET = evaluacijaStabla(root)
-                        if "&&" in kriterijumArray:
-                            kriterijumArray.remove("&&")
-                        if "||" in kriterijumArray:
-                            kriterijumArray.remove("||")
-                        if "!" in kriterijumArray:
-                            kriterijumArray.remove("!")
-                        if ")" in kriterijumArray:
-                            kriterijumArray.remove(")")
-                        if "(" in kriterijumArray:
-                            kriterijumArray.remove("(")
-                        rangirana_lista = rangiranje.rangirajSkup(kriterijumArray)
-                        paginacija.paginacijaRezultata(rangirana_lista)
+                kriterijum=kriterijum.strip()
+                if not kriterijum.strip() == '':
+                    kriterijumArray = parsirajNapredniUnos(kriterijum.lower())
+                    if kriterijum != "X":
+                        if validacijaUnosaSlozenaPretraga(kriterijumArray):
+                            br_pod = input(
+                                "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                                "ce rangiranje biti sporije): ")
+                            globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
+                            globalVar.n = globalVar.broj_podredjenih
+                            postfix = infixToPostfixGenerator(kriterijumArray)
+                            root = kreirajStablo(postfix)
+                            globalVar.RESULT_SET = evaluacijaStabla(root)
+                            if "&&" in kriterijumArray:
+                                kriterijumArray.remove("&&")
+                            if "||" in kriterijumArray:
+                                kriterijumArray.remove("||")
+                            if "!" in kriterijumArray:
+                                kriterijumArray.remove("!")
+                            if ")" in kriterijumArray:
+                                kriterijumArray.remove(")")
+                            if "(" in kriterijumArray:
+                                kriterijumArray.remove("(")
+                            rangirana_lista = rangiranje.rangirajSkup(kriterijumArray)
+                            paginacija.paginacijaRezultata(rangirana_lista)
+                    else:
+                        break
                 else:
-                    break
+                    print("Uneli ste prazan string")
         elif nacin_pretrage == "X" or nacin_pretrage == "x":
             sys.exit()
             #( test && java ) && ! test || !(test||java)
