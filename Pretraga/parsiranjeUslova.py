@@ -1,5 +1,6 @@
 from Ostalo import globalVar
 from StrukturePodataka.Skup import Skup
+import re
 from StrukturePodataka.stack import *
 
 class TreeNode: # cvor stabla koje cemo kreirati
@@ -108,6 +109,83 @@ def infixToPostfixGenerator(kriterijum): # proveriti da li brojac dobro radi!!!
         result.append(stek.pop())
 
     return " ".join(result)
+
+def parsirajNapredniUnos(kriterijum):
+        kriterijumArray = []
+        returnValAnd = []
+        returnVal = []
+
+        kriterijumArray = re.split(' ', kriterijum)
+        print(kriterijumArray)
+        if not "" in kriterijumArray:
+            for criteria in kriterijumArray:
+                if "||" in criteria and "||" != criteria:
+                    podstring = criteria.split("||")
+                    for criteriaOR in podstring:
+                        if "&&" not in criteriaOR:
+                            returnValAnd.append(criteriaOR)
+                            if criteriaOR != podstring[len(podstring) - 1]:
+                                returnValAnd.append("||")
+                        else:
+                            podstring2 = criteriaOR.split("&&")
+                            for criteriaAND in podstring2:
+                                returnValAnd.append(criteriaAND)
+                                if criteriaAND != podstring2[len(podstring2) - 1]:
+                                    returnValAnd.append("&&")
+                                elif criteriaOR != podstring[len(podstring) - 1]:
+                                    returnValAnd.append("||")
+                elif "&&" in criteria and "&&" != criteria:
+                    podstring = criteria.split("&&")
+                    for criteriaOR in podstring:
+                        if "||" not in criteriaOR:
+                            returnValAnd.append(criteriaOR)
+                            if criteriaOR != podstring[len(podstring) - 1]:
+                                returnValAnd.append("&&")
+                        else:
+                            podstring2 = criteriaOR.split("||")
+                            for criteriaAND in podstring2:
+                                returnValAnd.append(criteriaAND)
+                                if criteriaAND != podstring2[len(podstring2) - 1]:
+                                    returnValAnd.append("||")
+                                elif criteriaOR != podstring[len(podstring) - 1]:
+                                    returnValAnd.append("&&")
+                else:
+                    returnValAnd.append(criteria)
+
+            for criteria in returnValAnd:
+                if criteria[0] == "(" and criteria[len(criteria) - 1] == ")":
+                    returnVal.append("(")
+                    returnVal.append(criteria[1:len(criteria) - 2])
+                    returnVal.append(")")
+                elif criteria[0] == "(" and criteria != "(":
+                    if criteria[1] == "!":
+                        returnVal.append("(")
+                        returnVal.append("!")
+                        returnVal.append(criteria[2:])
+                    else:
+                        returnVal.append("(")
+                        returnVal.append(criteria[1:])
+                elif criteria[0] == "!" and criteria != "!":
+                    if (criteria[1] == "("):
+                        returnVal.append("!")
+                        returnVal.append("(")
+                        returnVal.append(criteria[2:])
+                    elif (criteria[1] == "!"):
+                        returnVal.append("!")
+                        returnVal.append("!")
+                        returnVal.append(criteria[2:])
+                    else:
+                        returnVal.append("!")
+                        returnVal.append(criteria[1:])
+                elif criteria[len(criteria) - 1] == ")" and criteria != ")":
+                    returnVal.append(criteria[0:len(criteria) - 1])
+                    returnVal.append(")")
+                else:
+                    returnVal.append(criteria)
+
+            return returnVal
+        else:
+            return kriterijumArray
 
                                                  #ZA DULETA ! AKO TI TREBA TEST
 """postfix = infixToPostfixGenerator("( dictionary list || set ) && ! tree")
