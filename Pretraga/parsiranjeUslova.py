@@ -121,52 +121,87 @@ def parsirajNapredniUnos(kriterijum):
             for criteria in kriterijumArray:
                 if "||" in criteria and "||" != criteria:
                     podstring = criteria.split("||")
-                    for criteriaOR in podstring:
-                        if "&&" not in criteriaOR:
-                            returnValAnd.append(criteriaOR)
-                            if criteriaOR != podstring[len(podstring) - 1]:
+                    if "" in podstring:
+                        for c in podstring:
+                            if c=="":
                                 returnValAnd.append("||")
-                        else:
-                            podstring2 = criteriaOR.split("&&")
-                            for criteriaAND in podstring2:
-                                returnValAnd.append(criteriaAND)
-                                if criteriaAND != podstring2[len(podstring2) - 1]:
-                                    returnValAnd.append("&&")
-                                elif criteriaOR != podstring[len(podstring) - 1]:
+                            else:
+                                returnValAnd.append(c)
+                    else:
+                        for criteriaOR in podstring:
+                            if "&&" not in criteriaOR:
+                                returnValAnd.append(criteriaOR)
+                                if criteriaOR != podstring[len(podstring) - 1]:
                                     returnValAnd.append("||")
+                            else:
+                                podstring2 = criteriaOR.split("&&")
+                                for criteriaAND in podstring2:
+                                    returnValAnd.append(criteriaAND)
+                                    if criteriaAND != podstring2[len(podstring2) - 1]:
+                                        returnValAnd.append("&&")
+                                    elif criteriaOR != podstring[len(podstring) - 1]:
+                                        returnValAnd.append("||")
                 elif "&&" in criteria and "&&" != criteria:
+                    #print(criteria)
                     podstring = criteria.split("&&")
-                    for criteriaOR in podstring:
-                        if "||" not in criteriaOR:
-                            returnValAnd.append(criteriaOR)
-                            if criteriaOR != podstring[len(podstring) - 1]:
+                    if "" in podstring:
+                        for c in podstring:
+                            if c=="":
                                 returnValAnd.append("&&")
-                        else:
-                            podstring2 = criteriaOR.split("||")
-                            for criteriaAND in podstring2:
-                                returnValAnd.append(criteriaAND)
-                                if criteriaAND != podstring2[len(podstring2) - 1]:
-                                    returnValAnd.append("||")
-                                elif criteriaOR != podstring[len(podstring) - 1]:
+                            else:
+                                returnValAnd.append(c)
+                    else:
+                        for criteriaOR in podstring:
+                            if "||" not in criteriaOR:
+                                returnValAnd.append(criteriaOR)
+                                if criteriaOR != podstring[len(podstring) - 1]:
                                     returnValAnd.append("&&")
+                            else:
+                                podstring2 = criteriaOR.split("||")
+                                for criteriaAND in podstring2:
+                                    returnValAnd.append(criteriaAND)
+                                    if criteriaAND != podstring2[len(podstring2) - 1]:
+                                        returnValAnd.append("||")
+                                    elif criteriaOR != podstring[len(podstring) - 1]:
+                                        returnValAnd.append("&&")
                 else:
                     returnValAnd.append(criteria)
-
+            print(returnValAnd)
             for criteria in returnValAnd:
-                if criteria[0] == "(" and criteria[len(criteria) - 1] == ")":
-                    returnVal.append("(")
-                    returnVal.append(criteria[1:len(criteria) - 2])
-                    returnVal.append(")")
-                elif criteria[0] == "(" and criteria != "(":
-                    if criteria[1] == "!":
+                if criteria[0] == "(" and criteria != "(":
+                    i=0
+                    for c in criteria:
+                        if(c=="("):
+                            returnVal.append("(")
+                        elif c=="!":
+                            returnVal.append("!")
+                        else:
+                            returnVal.append(criteria[i:])
+                            break
+                        i=i+1
+                    """if criteria[1] == "!":
                         returnVal.append("(")
                         returnVal.append("!")
                         returnVal.append(criteria[2:])
+                    elif criteria[1] == "(":
+                        returnVal.append("(")
+                        returnVal.append("(")
+                        returnVal.append(criteria[2:])
                     else:
                         returnVal.append("(")
-                        returnVal.append(criteria[1:])
+                        returnVal.append(criteria[1:])"""
                 elif criteria[0] == "!" and criteria != "!":
-                    if (criteria[1] == "("):
+                    i = 0
+                    for c in criteria:
+                        if (c == "("):
+                            returnVal.append("(")
+                        elif c == "!":
+                            returnVal.append("!")
+                        else:
+                            returnVal.append(criteria[i:])
+                            break
+                        i = i + 1
+                    """if (criteria[1] == "("):
                         returnVal.append("!")
                         returnVal.append("(")
                         returnVal.append(criteria[2:])
@@ -176,13 +211,26 @@ def parsirajNapredniUnos(kriterijum):
                         returnVal.append(criteria[2:])
                     else:
                         returnVal.append("!")
-                        returnVal.append(criteria[1:])
+                        returnVal.append(criteria[1:])"""
                 elif criteria[len(criteria) - 1] == ")" and criteria != ")":
-                    returnVal.append(criteria[0:len(criteria) - 1])
-                    returnVal.append(")")
+                    p=0
+                    for i in range(1,len(criteria)):
+                        if(criteria[-i]==")"):
+                            print("TEST")
+                            p+=1
+                        else:
+                            break
+                    returnVal.append(criteria[0:len(criteria)-p])
+                    for i in range(0,p):
+                        returnVal.append(")")
+
+
+
+                    """returnVal.append(criteria[0:len(criteria) - 1])
+                    returnVal.append(")")"""
                 else:
                     returnVal.append(criteria)
-
+            print(returnVal)
             return returnVal
         else:
             return kriterijumArray
