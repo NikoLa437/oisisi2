@@ -63,7 +63,7 @@ def ucitajPodatke(putanja):
         #update_progress(round(i/duzina,4))
         #i+=1"""
 
-def update_progress(progress):
+"""def update_progress(progress):
     barLength = 100 # Modify this to change the length of the progress bar
     status = ""
     if isinstance(progress, int):
@@ -80,10 +80,10 @@ def update_progress(progress):
     block = int(barLength*progress)
     text = "\rLoading: [{0}] {1}% {2}".format( "#"*block + "-"*(barLength-block), round(progress*100,2), status)
     sys.stdout.write(text)
-    sys.stdout.flush()
+    sys.stdout.flush()"""
 
 #funkcija za pronalazak html fajlova
-def prodji(putanja):
+"""def prodji(putanja):
     try:
         dirs = os.listdir(putanja)
         for dir in dirs:
@@ -97,13 +97,13 @@ def prodji(putanja):
     except IOError:
         print()
     finally:
-        return html_list
+        return html_list"""
 
 if __name__ == '__main__':
 
     while True:
         putanja = input("Unesi putanju(X za izlaz): ")
-        if not os.path.isabs(putanja):
+        if not os.path.isabs(putanja) and putanja != "X":
             putanja = os.path.abspath(putanja)
         start= time.time()
         ucitajPodatke(putanja)
@@ -133,9 +133,11 @@ if __name__ == '__main__':
                 else:
                     if validacijaUnosaObicnaPretraga(kriterijumArray):
                         br_pod = input(
-                            "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                            "Unesite broj podredjenih (>=1) cvorova koji zelite da utice na rangiranje (sto je broj veci to "
                             "ce rangiranje biti sporije, ukoliko se unese nevalidna vrednost, broj podredjenih ce biti 1): ")
                         if not br_pod.isdigit():
+                            br_pod = 1
+                        if int(br_pod) <= 0:
                             br_pod = 1
                         globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
                         globalVar.n = globalVar.broj_podredjenih
@@ -175,9 +177,11 @@ if __name__ == '__main__':
                     if kriterijum != "X":
                         if validacijaUnosaSlozenaPretraga(kriterijumArray):
                             br_pod = input(
-                                "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
+                                "Unesite broj podredjenih (>=1) cvorova koji zelite da utice na rangiranje (sto je broj veci to "
                                 "ce rangiranje biti sporije, ukoliko se unese nevalidna vrednost, broj podredjenih ce biti 1): ")
                             if not br_pod.isdigit():
+                                br_pod = 1
+                            if br_pod <= 0:
                                 br_pod = 1
                             globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
                             globalVar.n = globalVar.broj_podredjenih
