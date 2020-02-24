@@ -13,8 +13,8 @@ from Pretraga.pretrage import *
 from Ostalo.validacijaUnosa import *
 html_list= []
 
-"""def ucitajPodatke(putanja):
-    start = time.time()
+def ucitajPodatke(putanja):
+    #start = time.time()
     parser = Parser()
     files = glob.glob(putanja + '/**/*.html', recursive=True)
     i = 0
@@ -27,8 +27,8 @@ html_list= []
         globalVar.NADSKUP.add(file, 0)
         #update_progress(round(i/duzina,4))
         i+=1
-    end = time.time()
-    print(end - start)"""
+    #end = time.time()
+    #print(end - start)
 
 """def ucitajPodatke(putanja):
     start = time.time()
@@ -49,7 +49,7 @@ html_list= []
     end = time.time()
     print(end - start)"""
 
-def ucitajPodatke(putanja):
+"""def ucitajPodatke(putanja):
     parser = Parser()
     #prodji(putanja)
     #i = 0
@@ -61,7 +61,7 @@ def ucitajPodatke(putanja):
             globalVar.GLOBAL_TRIE.add_word(word.lower(), path)
         globalVar.NADSKUP.add(path, 0)
         #update_progress(round(i/duzina,4))
-        #i+=1
+        #i+=1"""
 
 def update_progress(progress):
     barLength = 100 # Modify this to change the length of the progress bar
@@ -103,6 +103,8 @@ if __name__ == '__main__':
 
     while True:
         putanja = input("Unesi putanju(X za izlaz): ")
+        if not os.path.isabs(putanja):
+            putanja = os.path.abspath(putanja)
         start= time.time()
         ucitajPodatke(putanja)
         end = time.time()
