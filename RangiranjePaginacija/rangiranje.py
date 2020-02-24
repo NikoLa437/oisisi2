@@ -96,7 +96,7 @@ def rangirajSkup(niz_reci):
                 mapa_prikaza[el] += 1 # svaki link koji sadrzi trazenu rec rang += 1 ili
                                       # koji ne sadrzi (u slucaju sa NOT)
             else:
-                mapa_prikaza[el] += 0.5 # svaki link koji ne sadrzi trazenu rec rang += 0.5
+                mapa_prikaza[el] += 0.3 # svaki link koji ne sadrzi trazenu rec rang += 0.3
                                         # ili je sadrzi (u slucaju sa NOT)
 
     for el in mapa_prikaza:
