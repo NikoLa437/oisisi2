@@ -3,10 +3,8 @@ from StrukturePodataka.Skup import Skup
 
 def slozenijaPretraga(kriterijum, operacija):
     globalVar.RESULT_SET = Skup()
-    smestena_prva = False
-    RESULT_SKUP = []
-    drugi_skup = Skup()
     if operacija =="OR":
+        RESULT_SKUP = []
         for uslov in kriterijum:
             bool, skup = globalVar.GLOBAL_TRIE.search(uslov.lower())  # dobijamo skup pretrage
             if bool == "True": # ako postoji skup
@@ -14,6 +12,8 @@ def slozenijaPretraga(kriterijum, operacija):
         for file in RESULT_SKUP:  # prolazimo kroz skup skupova html dokumenata koji ispunjavaju uslov i radimo logicko | za obicnu pretragu
             globalVar.RESULT_SET = globalVar.RESULT_SET | file
     elif operacija=="AND":
+        smestena_prva = False
+        drugi_skup = Skup()
         for uslov in kriterijum:
             bool, skup = globalVar.GLOBAL_TRIE.search(uslov.lower())  # dobijamo skup pretrage
             if bool == "True": # ako postoji skup
@@ -24,7 +24,8 @@ def slozenijaPretraga(kriterijum, operacija):
                     drugi_skup = skup # drugi skup za operaciju &
         globalVar.RESULT_SET = globalVar.RESULT_SET & drugi_skup  # odradjuje se or metoda nad skupovima
     elif operacija=="NOT":
-        smestena_prva= False
+        smestena_prva = False
+        drugi_skup = Skup()
         for uslov in kriterijum:
             bool, skup = globalVar.GLOBAL_TRIE.search(uslov.lower())
             if bool == "True":
