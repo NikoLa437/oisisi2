@@ -127,6 +127,7 @@ if __name__ == '__main__':
         if nacin_pretrage == "1":
             while(True):
                 kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
+                kriterijum=kriterijum.strip()
                 kriterijumArray = re.split(' ', kriterijum.lower())
                 if kriterijum == "X":
                     break
