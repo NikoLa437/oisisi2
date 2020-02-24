@@ -86,14 +86,13 @@ def update_progress(progress):
 def prodji(putanja):
     try:
         dirs = os.listdir(putanja)
-        delimiter = chr(92)
         for dir in dirs:
-            if os.path.isdir(putanja + delimiter + dir):
-                prodji(putanja + delimiter + dir)
+            put = os.path.join(putanja,dir)
+            if os.path.isdir(put):
+                prodji(put)
             else:
                 if dir.endswith(".html"):
-                    delimiter = chr(92)
-                    html_list.append(putanja + delimiter + dir)
+                    html_list.append(put)
         return html_list
     except IOError:
         print()
@@ -102,7 +101,6 @@ def prodji(putanja):
 
 if __name__ == '__main__':
 
-    print(sys.platform)
     while True:
         putanja = input("Unesi putanju(X za izlaz): ")
         start= time.time()
@@ -134,7 +132,9 @@ if __name__ == '__main__':
                     if validacijaUnosaObicnaPretraga(kriterijumArray):
                         br_pod = input(
                             "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
-                            "ce rangiranje biti sporije): ")
+                            "ce rangiranje biti sporije, ukoliko se unese nevalidna vrednost, broj podredjenih ce biti 1): ")
+                        if not br_pod.isdigit():
+                            br_pod = 1
                         globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
                         globalVar.n = globalVar.broj_podredjenih
                         if "or" not in kriterijumArray and "and" not in kriterijumArray and "not" not in kriterijumArray:
@@ -174,7 +174,9 @@ if __name__ == '__main__':
                         if validacijaUnosaSlozenaPretraga(kriterijumArray):
                             br_pod = input(
                                 "Unesite broj podredjenih cvorova koji zelite da utice na rangiranje (sto je broj veci to "
-                                "ce rangiranje biti sporije): ")
+                                "ce rangiranje biti sporije, ukoliko se unese nevalidna vrednost, broj podredjenih ce biti 1): ")
+                            if not br_pod.isdigit():
+                                br_pod = 1
                             globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
                             globalVar.n = globalVar.broj_podredjenih
                             postfix = infixToPostfixGenerator(kriterijumArray)
