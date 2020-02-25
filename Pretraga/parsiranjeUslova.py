@@ -123,7 +123,6 @@ def parsirajNapredniUnos(kriterijum):
             if not ch == '':
                 kriterijumArray.append(ch)
 
-        print(kriterijumArray)
         if not "" in kriterijumArray:
             for criteria in kriterijumArray: # idemo kroz listu
                 if "||" in criteria and "||" != criteria: # ako se || nalazi u kriterijumu a nije celo kriterijum
@@ -173,7 +172,7 @@ def parsirajNapredniUnos(kriterijum):
                                         returnValAnd.append("&&")
                 else: # ako nemamo ni || ni && samo dodajemo kriterijum i u returnvaland imamo parsiran string po || i &&
                     returnValAnd.append(criteria)
-            print(returnValAnd)
+            #print(returnValAnd)
             for criteria in returnValAnd:
                 if criteria[0] == "(" and criteria != "(": # ako naidjemo na ( a nije ceo kriterijum ( moramo parsirati po zagradi
                     i=0
@@ -223,7 +222,7 @@ def parsirajNapredniUnos(kriterijum):
                     p=0
                     for i in range(1,len(criteria)):
                         if(criteria[-i]==")"): # idemo od pozadi i brojimo zagrade
-                            print("TEST")
+                            #print("TEST")
                             p+=1
                         else:
                             break
@@ -237,7 +236,7 @@ def parsirajNapredniUnos(kriterijum):
                     returnVal.append(")")"""
                 else:
                     returnVal.append(criteria)
-            print(returnVal)
+            #print(returnVal)
             return returnVal
         else:
             return kriterijumArray
