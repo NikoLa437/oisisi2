@@ -126,9 +126,16 @@ if __name__ == '__main__':
         nacin_pretrage = input("Unos: ")
         if nacin_pretrage == "1":
             while(True):
-                kriterijum = input("Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
-                kriterijum=kriterijum.strip()
-                kriterijumArray = re.split(' ', kriterijum.lower())
+                kriterijum = input(
+                    "Unesite kriterijum pretrage (reci odvojene razmakom + upotreba AND,OR,NOT), X za izlazak: ")
+                kriterijum.strip()  # otklanja sve pre prvog karaktera i posle poslednjeg
+                kriterijum = kriterijum.replace('\t', '')  # tabulaciju pretvara u nista
+                kriterijumArray1 = re.split(' ', kriterijum.lower())  # splituje string po ' '
+                for ch in kriterijumArray1:  # iz splitovanog niza izbacuje ''
+                    if not ch == '':
+                        kriterijumArray.append(ch)
+
+
                 if kriterijum == "X":
                     break
                 else:
@@ -172,7 +179,6 @@ if __name__ == '__main__':
         elif nacin_pretrage == "2":
             while True:
                 kriterijum = input("Unesite kriterijum napredne pretrage ili X za izlazak: ")
-                kriterijum=kriterijum.strip()
                 if not kriterijum.strip() == '':
                     kriterijumArray = parsirajNapredniUnos(kriterijum.lower())
                     if kriterijum != "X":
