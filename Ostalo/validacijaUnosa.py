@@ -82,7 +82,7 @@ def validacijaUnosaSlozenaPretraga(kriterijumArray):
                 break
             elif (kriterijumArray[i+1] == ")" and ( kriterijumArray[i] in operators)):
                 print("POGRESAN UNOS")
-                print("Pre ) ne sme ici && , || , ! , ( ili )")
+                print("Pre ) ne sme ici && , || , !")
                 prolaz = False
                 break
 
