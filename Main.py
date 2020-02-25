@@ -13,11 +13,10 @@ from Pretraga.pretrage import *
 from Ostalo.validacijaUnosa import *
 html_list= []
 
-def ucitajPodatke(putanja):
-    #start = time.time()
+"""def ucitajPodatke(putanja):
     parser = Parser()
     files = glob.glob(putanja + '/**/*.html', recursive=True)
-    i = 0
+    #i=0
     duzina = files.__len__()-1
     for file in files:
         links, words = parser.parse(file)
@@ -25,29 +24,24 @@ def ucitajPodatke(putanja):
         for word in words:
             globalVar.GLOBAL_TRIE.add_word(word.lower(), file)
         globalVar.NADSKUP.add(file, 0)
-        #update_progress(round(i/duzina,4))
-        i+=1
-    #end = time.time()
-    #print(end - start)
+        #update_progress(round(i/duzina,4))"""
 
-"""def ucitajPodatke(putanja):
-    start = time.time()
+def ucitajPodatke(putanja):
     parser = Parser()
-    i = 0
+    #i = 0
     for root, dirs, files in os.walk(putanja):
         #duzina = files.__len__()-1
         for file in files:
-            if (file.endswith('html')):
-                f= root+ "\\" + file
-                links, words = parser.parse(f)
-                globalVar.GRAPH.add_from_html(f, links)  # ===========================================================za duleta
+            if (file.endswith('html') or file.endswith('htm')):
+                put = os.path.join(root,file)
+                links, words = parser.parse(put)
+                globalVar.GRAPH.add_from_html(put, links)  # ===========================================================za duleta
                 for word in words:
-                    globalVar.GLOBAL_TRIE.add_word(word.lower(), f)
-                globalVar.NADSKUP.add(f, 0)
+                    globalVar.GLOBAL_TRIE.add_word(word.lower(), put)
+                globalVar.NADSKUP.add(put, 0)
                 #update_progress(round(i/duzina,4))
                 #i+=1
-    end = time.time()
-    print(end - start)"""
+
 
 """def ucitajPodatke(putanja):
     parser = Parser()
@@ -91,7 +85,7 @@ def ucitajPodatke(putanja):
             if os.path.isdir(put):
                 prodji(put)
             else:
-                if dir.endswith(".html"):
+                if dir.endswith(".html") or dir.endswith(".htm"):
                     html_list.append(put)
         return html_list
     except IOError:
@@ -116,7 +110,6 @@ if __name__ == '__main__':
         else:
             break
 
-    kriterijumArray = []
 
     while (True):
         print("Odaberite vrstu pretrage:")
@@ -131,6 +124,7 @@ if __name__ == '__main__':
                 kriterijum.strip()  # otklanja sve pre prvog karaktera i posle poslednjeg
                 kriterijum = kriterijum.replace('\t', '')  # tabulaciju pretvara u nista
                 kriterijumArray1 = re.split(' ', kriterijum.lower())  # splituje string po ' '
+                kriterijumArray = []
                 for ch in kriterijumArray1:  # iz splitovanog niza izbacuje ''
                     if not ch == '':
                         kriterijumArray.append(ch)
@@ -188,7 +182,7 @@ if __name__ == '__main__':
                                 "ce rangiranje biti sporije, ukoliko se unese nevalidna vrednost, broj podredjenih ce biti 1): ")
                             if not br_pod.isdigit():
                                 br_pod = 1
-                            if br_pod <= 0:
+                            if int(br_pod) <= 0:
                                 br_pod = 1
                             globalVar.broj_podredjenih = 0.300001 / (3 ** (float(br_pod) - 1))
                             globalVar.n = globalVar.broj_podredjenih
