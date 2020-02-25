@@ -112,28 +112,35 @@ def infixToPostfixGenerator(kriterijum): # proveriti da li brojac dobro radi!!!
 
 def parsirajNapredniUnos(kriterijum):
         kriterijumArray = []
-        returnValAnd = []
+        returnValAnd = [] # niz koji cuva splitovano prema && i ||
         returnVal = []
 
-        kriterijumArray = re.split(' ', kriterijum)
+        kriterijum = kriterijum.strip()
+        kriterijum = kriterijum.replace('\t', '')
+        kriterijumArray1 = re.split(' ', kriterijum)
+
+        for ch in kriterijumArray1:
+            if not ch == '':
+                kriterijumArray.append(ch)
+
         print(kriterijumArray)
         if not "" in kriterijumArray:
-            for criteria in kriterijumArray:
-                if "||" in criteria and "||" != criteria:
-                    podstring = criteria.split("||")
-                    if "" in podstring:
+            for criteria in kriterijumArray: # idemo kroz listu
+                if "||" in criteria and "||" != criteria: # ako se || nalazi u kriterijumu a nije celo kriterijum
+                    podstring = criteria.split("||") # podeli po ||
+                    if "" in podstring: # ako imamo "" u podstingu(desice se kod ||test i test||) umesto toga stavi ||
                         for c in podstring:
                             if c=="":
                                 returnValAnd.append("||")
                             else:
                                 returnValAnd.append(c)
-                    else:
-                        for criteriaOR in podstring:
-                            if "&&" not in criteriaOR:
+                    else: # u suprotnom
+                        for criteriaOR in podstring:  # prolazimo kroz podstring
+                            if "&&" not in criteriaOR: #ako u uslovu nema && onda ubacujemo uslov i dodajemo || sve kod ne dodjemo do poslednjeg kriterijuma
                                 returnValAnd.append(criteriaOR)
                                 if criteriaOR != podstring[len(podstring) - 1]:
                                     returnValAnd.append("||")
-                            else:
+                            else: # ako imamo && onda njega delimo i ponavaljamo isti postupak
                                 podstring2 = criteriaOR.split("&&")
                                 for criteriaAND in podstring2:
                                     returnValAnd.append(criteriaAND)
@@ -141,7 +148,7 @@ def parsirajNapredniUnos(kriterijum):
                                         returnValAnd.append("&&")
                                     elif criteriaOR != podstring[len(podstring) - 1]:
                                         returnValAnd.append("||")
-                elif "&&" in criteria and "&&" != criteria:
+                elif "&&" in criteria and "&&" != criteria: # isti princip kao za ||
                     #print(criteria)
                     podstring = criteria.split("&&")
                     if "" in podstring:
@@ -164,18 +171,18 @@ def parsirajNapredniUnos(kriterijum):
                                         returnValAnd.append("||")
                                     elif criteriaOR != podstring[len(podstring) - 1]:
                                         returnValAnd.append("&&")
-                else:
+                else: # ako nemamo ni || ni && samo dodajemo kriterijum i u returnvaland imamo parsiran string po || i &&
                     returnValAnd.append(criteria)
             print(returnValAnd)
             for criteria in returnValAnd:
-                if criteria[0] == "(" and criteria != "(":
+                if criteria[0] == "(" and criteria != "(": # ako naidjemo na ( a nije ceo kriterijum ( moramo parsirati po zagradi
                     i=0
-                    for c in criteria:
-                        if(c=="("):
+                    for c in criteria: # idemo po karakterima
+                        if(c=="("): # ako naidjemo na zagradu upisujemo zagradu,isto i za !
                             returnVal.append("(")
                         elif c=="!":
                             returnVal.append("!")
-                        else:
+                        else: # u suprotnom upisujemo ostatak stringa i zavrsavamo for
                             returnVal.append(criteria[i:])
                             break
                         i=i+1
@@ -215,13 +222,13 @@ def parsirajNapredniUnos(kriterijum):
                 elif criteria[len(criteria) - 1] == ")" and criteria != ")":
                     p=0
                     for i in range(1,len(criteria)):
-                        if(criteria[-i]==")"):
+                        if(criteria[-i]==")"): # idemo od pozadi i brojimo zagrade
                             print("TEST")
                             p+=1
                         else:
                             break
-                    returnVal.append(criteria[0:len(criteria)-p])
-                    for i in range(0,p):
+                    returnVal.append(criteria[0:len(criteria)-p]) # upisemo prvih len-p karaktera
+                    for i in range(0,p): # narednih p karaktera su zagrade
                         returnVal.append(")")
 
 
@@ -235,7 +242,7 @@ def parsirajNapredniUnos(kriterijum):
         else:
             return kriterijumArray
 
-                                                 #ZA DULETA ! AKO TI TREBA TEST
+                                                 #ZA DULETA ! AKO TI TREBA TEST## TEST PRIMER: ( (test &&java ) 	&&    ! test) || !(test||java)
 """postfix = infixToPostfixGenerator("( dictionary list || set ) && ! tree")
 r = kreirajStablo(postfix)
 printPostorder(r)"""
