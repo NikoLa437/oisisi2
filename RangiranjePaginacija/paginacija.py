@@ -1,9 +1,10 @@
 def paginacijaRezultata(lista_prikaz):
     N = 10
     pocetak = 0
-    if lista_prikaz.__len__() != 0:
-        if N > len(lista_prikaz):
-            kraj = len(lista_prikaz)
+    duzina = len(lista_prikaz)
+    if duzina != 0:
+        if N > duzina:
+            kraj = duzina
             N = kraj
         else:
             kraj = N
@@ -20,22 +21,22 @@ def paginacijaRezultata(lista_prikaz):
             if izbor == "X" or izbor == "x":
                 break
             if izbor == "1":
-                if kraj + N > len(lista_prikaz):
+                if kraj + N > duzina:
                     """if len(lista_prikaz) - N < 0:
                         pocetak = 0
                     else:
                         pocetak = kraj"""
-                    if pocetak + N < len(lista_prikaz):
+                    if pocetak + N < duzina:
                         pocetak += N
-                    kraj = len(lista_prikaz)
+                    kraj = duzina
                 else:
                     kraj += N
                     pocetak += N
             if izbor == "2":
                 if pocetak - N < 0:
                     pocetak = 0
-                    if N > len(lista_prikaz):
-                        kraj = len(lista_prikaz)
+                    if N > duzina:
+                        kraj = duzina
                     else:
                         kraj = N
                 else:
@@ -49,11 +50,11 @@ def paginacijaRezultata(lista_prikaz):
                 if int(n) <= 0:
                     n = 10
                 N = int(n)
-                if N > len(lista_prikaz):
-                    N = len(lista_prikaz)
+                if N > duzina:
+                    N = duzina
                     print("Unet veci broj od broja stranica")
-                if pocetak + N > len(lista_prikaz):
-                    kraj = len(lista_prikaz)
+                if pocetak + N > duzina:
+                    kraj = duzina
                 else:
                     kraj = pocetak + N
     else:
@@ -63,3 +64,5 @@ def ispisiRezultate(lista_prikaz, pocetak, kraj):
     print("%5s" % "", "%8s" % "Rang", "\tPutanja HTML stranice")
     for i in range(pocetak, kraj, 1):
         print("%5s" % str(i + 1) + ".", "%8.2f" % lista_prikaz[i].get_rang(), lista_prikaz[i].get_stranica())
+    if(kraj == len(lista_prikaz)):
+        print("Dosli ste do kraja!")
